@@ -4,13 +4,16 @@ type Controller struct {
 	tiles [25][25]Tile
 }
 
-func (c *Controller) InitController() {
-	c.tiles[0][0] = new(tile)
-	c.tiles[1][0] = new(tile)
-	c.tiles[2][0] = new(tile)
-	c.tiles[0][1] = new(tile)
-	c.tiles[1][1] = new(tile)
-	c.tiles[2][1] = new(tile)
+func (c *Controller) InitController(tileMap [25][25]bool) {
+
+	for i := 0; i < 25; i++ {
+		for j := 0; j < 25; j++ {
+			if tileMap[i][j] {
+				c.tiles[i][j] = new(tile)
+			}
+		}
+	}
+
 	c.joinTiles()
 
 	var v [4]bool {false, false, true, true }
@@ -21,7 +24,7 @@ func (c *Controller) joinTiles() {
 		for y := 0; y < 25; y++ {
 			// Check all neighbours
 			for d := 0; d < 4; d++ {
-				dx, dy = getIndices(d)
+				dx, dy := getIndices(d)
 				if validIndex(x+dx, y+dy) {
 					// If a neighbour exists at the direction,
 					// join them together
@@ -36,7 +39,7 @@ func (c *Controller) joinTiles() {
 	}
 }
 
-func getIndices(dir int) (x, y int) {
+func getIndices(dir int) (int, int) {
 	switch dir {
 	case UP:
 		return 0, 1
