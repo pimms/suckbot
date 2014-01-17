@@ -15,8 +15,6 @@ func (c *Controller) InitController(tileMap [25][25]bool) {
 	}
 
 	c.joinTiles()
-
-	var v [4]bool {false, false, true, true }
 }
 
 func (c *Controller) joinTiles() {
