@@ -1,7 +1,12 @@
 package main
 
-import "fmt"
+import (
+	"env"
+	"fmt"
+)
 
 func main() {
 	fmt.Println("Hello, world!")
+
+	InitController()
 }

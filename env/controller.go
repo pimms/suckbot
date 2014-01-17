@@ -12,6 +12,8 @@ func (c *Controller) InitController() {
 	c.tiles[1][1] = new(tile)
 	c.tiles[2][1] = new(tile)
 	c.joinTiles()
+
+	var v [4]bool {false, false, true, true }
 }
 
 func (c *Controller) joinTiles() {
