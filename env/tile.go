@@ -12,13 +12,49 @@ const (
 	DIRTY = 1
 )
 
-type Direction int32
-type TileState int32
+type TileState int
 
 /* Public interface for the Tile structures.
  * Provides only read-access to neighbours and states.
  */
 type Tile interface {
-	GetNeighbour(direction Direction) *Tile
+	GetNeighbour(direction int) Tile
 	GetState() TileState
+
+	setNeighbour(direction int, neigh Tile) bool
+}
+
+/* The Tile implementation */
+type tile struct {
+	neighbours [4]Tile
+	state      TileState
+}
+
+/* Interface Tile implementation */
+func (this *tile) GetState() TileState {
+	return this.state
+}
+
+func (this *tile) GetNeighbour(direction int) Tile {
+	if direction >= 0 && direction <= 3 {
+		return this.neighbours[direction]
+	}
+
+	return nil
+}
+
+/* Private methods */
+func (this *tile) setNeighbour(direction int, neigh Tile) bool {
+	if direction >= 0 && direction <= 3 {
+		this.neighbours[direction] = neigh
+
+		var opposite int = (direction + 2) % 4
+		if neigh.GetNeighbour(opposite) != this {
+			return neigh.setNeighbour(opposite, this)
+		}
+
+		return true
+	}
+
+	return false
 }
