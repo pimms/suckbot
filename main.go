@@ -8,9 +8,7 @@ import (
 func main() {
 	fmt.Println("Hello, world!")
 
-	var c env.Controller
-	var b [25][25]bool
-	c.InitController(b)
+	/*controller := */ createController()
 }
 
 func createController() *env.Controller {
@@ -24,4 +22,5 @@ func createController() *env.Controller {
 	tileMap[1][1] = true
 
 	controller.InitController(tileMap)
+	return controller
 }
