@@ -3,9 +3,9 @@ package env
 import "testing"
 
 func TestValidDirections(t *testing.T) {
-	var myTile *tile = new(tile)
+	var myTile *t_tile = new(t_tile)
 	for i := 0; i < 4; i++ {
-		myTile.neighbours[i] = new(tile)
+		myTile.neighbours[i] = new(t_tile)
 	}
 
 	// Ensure that 0-4 are non-nil
@@ -30,9 +30,9 @@ func TestValidDirections(t *testing.T) {
 }
 
 func TestSetAndGet(t *testing.T) {
-	var myTile *tile = new(tile)
+	var myTile *t_tile = new(t_tile)
 
-	var newTile = new(tile)
+	var newTile = new(t_tile)
 	result := myTile.setNeighbour(0, newTile)
 	if !result {
 		t.Error("Unexpected failure of setting neighbour")

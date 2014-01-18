@@ -1,7 +1,7 @@
 package env
 
 type Controller struct {
-	tiles [25][25]Tile
+	tiles [25][25]ITile
 }
 
 func (c *Controller) InitController(tileMap [25][25]bool) {
@@ -9,7 +9,7 @@ func (c *Controller) InitController(tileMap [25][25]bool) {
 	for i := 0; i < 25; i++ {
 		for j := 0; j < 25; j++ {
 			if tileMap[i][j] {
-				c.tiles[i][j] = new(tile)
+				c.tiles[i][j] = new(t_tile)
 			}
 		}
 	}

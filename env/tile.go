@@ -17,25 +17,24 @@ type TileState int
 /* Public interface for the Tile structures.
  * Provides only read-access to neighbours and states.
  */
-type Tile interface {
-	GetNeighbour(direction int) Tile
+type ITile interface {
+	GetNeighbour(direction int) ITile
 	GetState() TileState
 
-	setNeighbour(direction int, neigh Tile) bool
+	setNeighbour(direction int, neigh ITile) bool
 }
 
-/* The Tile implementation */
-type tile struct {
-	neighbours [4]Tile
+type t_tile struct {
+	neighbours [4]ITile
 	state      TileState
 }
 
-/* Interface Tile implementation */
-func (this *tile) GetState() TileState {
+/* Interface ITile implementation */
+func (this *t_tile) GetState() TileState {
 	return this.state
 }
 
-func (this *tile) GetNeighbour(direction int) Tile {
+func (this *t_tile) GetNeighbour(direction int) ITile {
 	if direction >= 0 && direction <= 3 {
 		return this.neighbours[direction]
 	}
@@ -44,7 +43,7 @@ func (this *tile) GetNeighbour(direction int) Tile {
 }
 
 /* Private methods */
-func (this *tile) setNeighbour(direction int, neigh Tile) bool {
+func (this *t_tile) setNeighbour(direction int, neigh ITile) bool {
 	if direction >= 0 && direction <= 3 {
 		this.neighbours[direction] = neigh
 
