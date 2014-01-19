@@ -20,6 +20,7 @@ type TileState bool
 type ITile interface {
 	GetNeighbour(direction int) ITile
 	GetState() TileState
+	GetIndices() (int, int)
 
 	setState(state TileState)
 	setNeighbour(direction int, neigh ITile) bool
@@ -28,6 +29,9 @@ type ITile interface {
 type t_tile struct {
 	neighbours [4]ITile
 	state      TileState
+
+	xpos int
+	ypos int
 }
 
 /* Interface ITile implementation */
@@ -41,6 +45,10 @@ func (this *t_tile) GetNeighbour(direction int) ITile {
 	}
 
 	return nil
+}
+
+func (this *t_tile) GetIndices() (int, int) {
+	return this.xpos, this.ypos
 }
 
 /* Private methods */

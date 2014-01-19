@@ -17,7 +17,11 @@ func (c *Controller) InitController(tileMap [MAX_SIZE][MAX_SIZE]bool) {
 	for i := 0; i < MAX_SIZE; i++ {
 		for j := 0; j < MAX_SIZE; j++ {
 			if tileMap[i][j] {
-				c.tiles[i][j] = new(t_tile)
+				var tt *t_tile = new(t_tile)
+				tt.xpos = i
+				tt.ypos = j
+
+				c.tiles[i][j] = tt
 			}
 		}
 	}
@@ -31,15 +35,15 @@ func (c Controller) CanPermute(posIdx, dirtIdx uint64) bool {
 	var upos uint = uint(posIdx)
 	var uidx uint = uint(dirtIdx)
 
-	return (count > (1<<upos) && count > uidx)
+	return (count > upos && (1<<count) > uidx)
 }
 
-func (c *Controller) Permute(posIdx, dirtIdx int64) {
+func (c *Controller) Permute(posIdx, dirtIdx uint64) {
 	var dirty bool
-	var flag int64
+	var flag uint64
 
-	c.permPos = uint64(posIdx)
-	c.permDirt = uint64(dirtIdx)
+	c.permPos = posIdx
+	c.permDirt = dirtIdx
 
 	// Flag dirty / clean tiles
 	for i := 0; i < len(c.tileSlice); i++ {
