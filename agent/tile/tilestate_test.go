@@ -12,13 +12,15 @@ func createDummyEnvController() *env.Controller {
 	tileMap[0][0] = true
 	tileMap[1][0] = true
 	tileMap[2][0] = true
+	tileMap[0][1] = true
 	tileMap[1][1] = true
+	tileMap[2][1] = true
 
 	c.InitController(tileMap)
 	return c
 }
 
-func TestUndiscoveredByDefault(t *testing.T) {
+func _TestUndiscoveredByDefault(t *testing.T) {
 	state := new(t_tilestate)
 
 	for x := 0; x < env.MAX_SIZE; x++ {
@@ -30,7 +32,7 @@ func TestUndiscoveredByDefault(t *testing.T) {
 	}
 }
 
-func TestAddTile(t *testing.T) {
+func _TestAddTile(t *testing.T) {
 	var cont *env.Controller
 	var state t_tilestate
 	var tile env.ITile
@@ -46,10 +48,70 @@ func TestAddTile(t *testing.T) {
 		t.Error("Non-matching tile-state")
 	}
 
+	if !state.tiles[x][y].explored {
+		t.Error("Discovered tile is not flagged as explored")
+	}
+
 	neigh = tile.GetNeighbour(env.RIGHT)
 	state.AddDiscovery(neigh)
 
 	if state.tiles[x+1][y].tile != neigh {
 		t.Error("Non-matching tile-state")
+	}
+}
+
+func TestTileStatus(t *testing.T) {
+	var cont *env.Controller
+	var state t_tilestate
+	var base env.ITile
+	var result Status
+
+	// base is positioned at [0,0]
+	cont = createDummyEnvController()
+	base = cont.GetStartingTile()
+	state.AddDiscovery(base)
+
+	// Left is an invalid index [-1, 0]
+	result = state.GetTileStatus(base, env.LEFT)
+	if result != TILE_INVALID {
+		t.Errorf("Expected %d, received %d\n", TILE_INVALID, result)
+	}
+
+	// Down is an invalid index [0, -1]
+	result = state.GetTileStatus(base, env.DOWN)
+	if result != TILE_INVALID {
+		t.Errorf("Expected %d, received %d\n", TILE_INVALID, result)
+	}
+
+	// Right is an undiscovered tile
+	result = state.GetTileStatus(base, env.RIGHT)
+	if result != TILE_UNKOWN {
+		t.Errorf("Expected %d, received %d\n", TILE_UNKOWN, result)
+	}
+
+	// Up is an undiscovered tile
+	result = state.GetTileStatus(base, env.UP)
+	if result != TILE_UNKOWN {
+		t.Errorf("Expected %d, received %d\n", TILE_UNKOWN, result)
+	}
+
+	// Discover tile to the right
+	base = base.GetNeighbour(env.RIGHT)
+	state.AddDiscovery(base)
+
+	result = state.GetTileStatus(base, env.LEFT)
+	if result != TILE_DISCOVERED {
+		t.Errorf("Expected %d, received %d\n", TILE_DISCOVERED, result)
+	}
+
+	// Move to the tile above the original base
+	base = base.GetNeighbour(env.UP)
+	state.AddDiscovery(base)
+	base = base.GetNeighbour(env.LEFT)
+	state.AddDiscovery(base)
+
+	result = state.GetTileStatus(base, env.DOWN)
+	if result != TILE_DISCOVERED {
+		t.Errorf("Expected %d, received %d\n", TILE_DISCOVERED, result)
 	}
 }

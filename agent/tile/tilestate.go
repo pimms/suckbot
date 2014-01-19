@@ -1,6 +1,17 @@
 package tile
 
-import "github.com/pimms/suckbot/env"
+import (
+	"github.com/pimms/suckbot/env"
+)
+
+type Status int
+
+const (
+	TILE_UNKOWN     Status = 0
+	TILE_DISCOVERED Status = 1
+	TILE_WALL       Status = 2
+	TILE_INVALID    Status = 3
+)
 
 /* The t_tilestate holds the data about the discovered
  * tiles and the status of the neighbours as well.
@@ -34,4 +45,28 @@ func (t *t_tilestate) AddDiscovery(tile env.ITile) {
 	// Create a new t_tilewrapper
 	twrap.tile = tile
 	t.tiles[x][y] = twrap
+	t.tiles[x][y].explored = true
+}
+
+func (t *t_tilestate) GetTileStatus(tile env.ITile, dir int) Status {
+	var x, y int
+
+	x, y = tile.GetIndices()
+	dx, dy := env.GetIndices(dir)
+	x += dx
+	y += dy
+
+	if !env.ValidIndex(x, y) {
+		return TILE_INVALID
+	}
+
+	if t.tiles[x][y].explored {
+		if t.tiles[x][y].tile == nil {
+			return TILE_WALL
+		} else {
+			return TILE_DISCOVERED
+		}
+	} else {
+		return TILE_UNKOWN
+	}
 }

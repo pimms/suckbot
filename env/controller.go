@@ -71,8 +71,8 @@ func (c *Controller) joinTiles() {
 		for y := 0; y < MAX_SIZE; y++ {
 			// Check all neighbours
 			for d := 0; d < 4; d++ {
-				dx, dy = getIndices(d)
-				if validIndex(x+dx, y+dy) {
+				dx, dy = GetIndices(d)
+				if ValidIndex(x+dx, y+dy) {
 					// If a neighbour exists at the direction,
 					// join them together
 					thisTile = c.tiles[x][y]
@@ -113,7 +113,7 @@ func (c *Controller) initSlice() {
 	}
 }
 
-func getIndices(dir int) (int, int) {
+func GetIndices(dir int) (int, int) {
 	switch dir {
 	case UP:
 		return 0, 1
@@ -128,6 +128,6 @@ func getIndices(dir int) (int, int) {
 	return 0, 0
 }
 
-func validIndex(x, y int) bool {
+func ValidIndex(x, y int) bool {
 	return x >= 0 && x < MAX_SIZE && y >= 0 && y < MAX_SIZE
 }
