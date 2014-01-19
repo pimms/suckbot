@@ -7,6 +7,9 @@ const (
 type Controller struct {
 	tiles     [MAX_SIZE][MAX_SIZE]ITile
 	tileSlice []ITile
+
+	permPos  uint64
+	permDirt uint64
 }
 
 func (c *Controller) InitController(tileMap [MAX_SIZE][MAX_SIZE]bool) {
@@ -23,7 +26,7 @@ func (c *Controller) InitController(tileMap [MAX_SIZE][MAX_SIZE]bool) {
 	c.initSlice()
 }
 
-func (c Controller) CanPermute(posIdx, dirtIdx int64) bool {
+func (c Controller) CanPermute(posIdx, dirtIdx uint64) bool {
 	var count uint = uint(len(c.tileSlice))
 	var upos uint = uint(posIdx)
 	var uidx uint = uint(dirtIdx)
@@ -35,8 +38,8 @@ func (c *Controller) Permute(posIdx, dirtIdx int64) {
 	var dirty bool
 	var flag int64
 
-	// TODO:
-	// Handle starting position
+	c.permPos = uint64(posIdx)
+	c.permDirt = uint64(dirtIdx)
 
 	// Flag dirty / clean tiles
 	for i := 0; i < len(c.tileSlice); i++ {
@@ -51,9 +54,8 @@ func (c *Controller) Permute(posIdx, dirtIdx int64) {
 	}
 }
 
-func (c Controller) GetStartingTile() *ITile {
-	// TODO
-	return nil
+func (c Controller) GetStartingTile() ITile {
+	return c.tileSlice[c.permPos]
 }
 
 func (c *Controller) joinTiles() {

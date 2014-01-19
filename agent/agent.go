@@ -7,6 +7,6 @@ import (
 type Agent struct {
 }
 
-func (a *Agent) Initialize(startTile *env.ITile) {
+func (a *Agent) Initialize(startTile env.ITile) {
 
 }
