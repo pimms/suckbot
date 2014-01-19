@@ -24,18 +24,20 @@ func (c *Controller) InitController(tileMap [MAX_SIZE][MAX_SIZE]bool) {
 }
 
 func (c Controller) CanPermute(posIdx, dirtIdx int64) bool {
-	var len int = len(c.tileSlice)
+	//var len int = len(c.tileSlice)
 	return true
 }
 
 func (c *Controller) Permute(posIdx, dirtIdx int64) {
+	var dirty bool
+	var flag int64
+
 	// TODO:
 	// Handle starting position
 
 	// Flag dirty / clean tiles
 	for i := 0; i < len(c.tileSlice); i++ {
-		var dirty bool
-		var flag int64 = (dirtIdx & (1 << uint(i)))
+		flag = (dirtIdx & (1 << uint(i)))
 		dirty = flag != 0
 
 		if dirty {
@@ -52,16 +54,20 @@ func (c Controller) GetStartingTile() *ITile {
 }
 
 func (c *Controller) joinTiles() {
+	var thisTile ITile
+	var neighbour ITile
+	var dx, dy int
+
 	for x := 0; x < MAX_SIZE; x++ {
 		for y := 0; y < MAX_SIZE; y++ {
 			// Check all neighbours
 			for d := 0; d < 4; d++ {
-				dx, dy := getIndices(d)
+				dx, dy = getIndices(d)
 				if validIndex(x+dx, y+dy) {
 					// If a neighbour exists at the direction,
 					// join them together
-					thisTile := c.tiles[x][y]
-					neighbour := c.tiles[x+dx][y+dy]
+					thisTile = c.tiles[x][y]
+					neighbour = c.tiles[x+dx][y+dy]
 					if thisTile != nil && neighbour != nil {
 						thisTile.setNeighbour(d, neighbour)
 					}
@@ -72,8 +78,10 @@ func (c *Controller) joinTiles() {
 }
 
 func (c *Controller) initSlice() {
+	var count int
+	var idx int
+
 	// Count the number of tiles
-	var count int = 0
 	for x := 0; x < MAX_SIZE; x++ {
 		for y := 0; y < MAX_SIZE; y++ {
 			if c.tiles[x][y] != nil {
@@ -84,7 +92,6 @@ func (c *Controller) initSlice() {
 
 	// We know the length, create the slice
 	c.tileSlice = make([]ITile, count)
-	var idx int = 0
 
 	// Reference the tiles in a linear array
 	for x := 0; x < MAX_SIZE; x++ {
