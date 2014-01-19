@@ -2,13 +2,16 @@ package main
 
 import (
 	"fmt"
+	"github.com/pimms/suckbot/agent"
 	"github.com/pimms/suckbot/env"
 )
 
 func main() {
 	fmt.Println("Hello, world!")
 
-	/*controller := */ createController()
+	controller := createController()
+	a := new(agent.Agent)
+	a.Initialize(controller.GetStartingTile())
 }
 
 func createController() *env.Controller {

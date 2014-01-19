@@ -17,6 +17,11 @@ func (c *Controller) InitController(tileMap [25][25]bool) {
 	c.joinTiles()
 }
 
+func (c Controller) GetStartingTile() *ITile {
+	// TODO
+	return nil
+}
+
 func (c *Controller) joinTiles() {
 	for x := 0; x < 25; x++ {
 		for y := 0; y < 25; y++ {
