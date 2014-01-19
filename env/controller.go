@@ -24,8 +24,11 @@ func (c *Controller) InitController(tileMap [MAX_SIZE][MAX_SIZE]bool) {
 }
 
 func (c Controller) CanPermute(posIdx, dirtIdx int64) bool {
-	var count int = len(c.tileSlice)
-	return (count > (1<<posIdx) && count > dirtIdx)
+	var count uint = uint(len(c.tileSlice))
+	var upos uint = uint(posIdx)
+	var uidx uint = uint(dirtIdx)
+
+	return (count > (1<<upos) && count > uidx)
 }
 
 func (c *Controller) Permute(posIdx, dirtIdx int64) {
