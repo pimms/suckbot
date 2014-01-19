@@ -59,6 +59,6 @@ func (this *t_tile) setNeighbour(direction int, neigh ITile) bool {
 	return false
 }
 
-func (this *tile) setState(state TileState) {
+func (this *t_tile) setState(state TileState) {
 	this.state = state
 }

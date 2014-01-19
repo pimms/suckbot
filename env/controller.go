@@ -5,8 +5,8 @@ const (
 )
 
 type Controller struct {
-	tiles     [MAX_SIZE][MAX_SIZE]Tile
-	tileSlice []Tile
+	tiles     [MAX_SIZE][MAX_SIZE]ITile
+	tileSlice []ITile
 }
 
 func (c *Controller) InitController(tileMap [MAX_SIZE][MAX_SIZE]bool) {
@@ -25,12 +25,7 @@ func (c *Controller) InitController(tileMap [MAX_SIZE][MAX_SIZE]bool) {
 
 func (c Controller) CanPermute(posIdx, dirtIdx int64) bool {
 	var len int = len(c.tileSlice)
-
-	// yeaah
-		return true
-	}
-
-	return false
+	return true
 }
 
 func (c *Controller) Permute(posIdx, dirtIdx int64) {
@@ -88,7 +83,7 @@ func (c *Controller) initSlice() {
 	}
 
 	// We know the length, create the slice
-	c.tileSlice = make([]Tile, count)
+	c.tileSlice = make([]ITile, count)
 	var idx int = 0
 
 	// Reference the tiles in a linear array
