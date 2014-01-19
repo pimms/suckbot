@@ -14,7 +14,7 @@ func (c *Controller) InitController(tileMap [MAX_SIZE][MAX_SIZE]bool) {
 	for i := 0; i < MAX_SIZE; i++ {
 		for j := 0; j < MAX_SIZE; j++ {
 			if tileMap[i][j] {
-				c.tiles[i][j] = new(tile)
+				c.tiles[i][j] = new(t_tile)
 			}
 		}
 	}
@@ -27,7 +27,6 @@ func (c Controller) CanPermute(posIdx, dirtIdx int64) bool {
 	var len int = len(c.tileSlice)
 
 	// yeaah
-	if 1<<uint(len) > dirtIdx && int64(len) > posIdx {
 		return true
 	}
 
