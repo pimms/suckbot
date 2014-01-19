@@ -21,12 +21,8 @@ type ITile interface {
 	GetNeighbour(direction int) ITile
 	GetState() TileState
 
-<<<<<<< HEAD
-	setNeighbour(direction int, neigh Tile) bool
 	setState(state TileState)
-=======
 	setNeighbour(direction int, neigh ITile) bool
->>>>>>> 721cdeebdd2ae23e3f22a57825a80960bea10805
 }
 
 type t_tile struct {

@@ -9,12 +9,11 @@ import "github.com/pimms/suckbot/env"
  * it's indices associated with it.
  */
 type t_tilestate struct {
-	tiles [8][8]t_tilewrapper
+	tiles [env.MAX_SIZE][env.MAX_SIZE]t_tilewrapper
 }
 
 /* Wrapper around an ITile and it's discovered status. If a
  * tile has been explored but it's tile member is nil, it's
- * a wall.
  */
 type t_tilewrapper struct {
 	tile     env.ITile
