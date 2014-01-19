@@ -6,7 +6,7 @@ import (
 )
 
 func createDummyEnvController() *env.Controller {
-	var c env.Controller = new(env.Controller)
+	var c *env.Controller = new(env.Controller)
 
 	var tileMap [env.MAX_SIZE][env.MAX_SIZE]bool
 	tileMap[0][0] = true
@@ -31,13 +31,25 @@ func TestUndiscoveredByDefault(t *testing.T) {
 }
 
 func TestAddTile(t *testing.T) {
-	var cont env.Controller
+	var cont *env.Controller
 	var state t_tilestate
-	var tile ITile
+	var tile env.ITile
+	var neigh env.ITile
+	var x, y int
 
 	cont = createDummyEnvController()
-	state = new(t_tilestate)
 	tile = cont.GetStartingTile()
-	state.AddDiscovery(tile, nil, 0)
+	state.AddDiscovery(tile)
+	x, y = tile.GetIndices()
 
+	if state.tiles[x][y].tile != tile {
+		t.Error("Non-matching tile-state")
+	}
+
+	neigh = tile.GetNeighbour(env.RIGHT)
+	state.AddDiscovery(neigh)
+
+	if state.tiles[x+1][y].tile != neigh {
+		t.Error("Non-matching tile-state")
+	}
 }

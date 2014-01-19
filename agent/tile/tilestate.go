@@ -26,5 +26,12 @@ type t_tilewrapper struct {
 =======================
 */
 func (t *t_tilestate) AddDiscovery(tile env.ITile) {
-	return true
+	var x, y int
+	var twrap t_tilewrapper
+
+	x, y = tile.GetIndices()
+
+	// Create a new t_tilewrapper
+	twrap.tile = tile
+	t.tiles[x][y] = twrap
 }
