@@ -3,7 +3,7 @@ package env
 import "testing"
 
 func TestSetMap(t *testing.T) {
-	var tileTestMap [25][25]bool
+	var tileTestMap [MAX_SIZE][MAX_SIZE]bool
 
 	tileTestMap[2][5] = true
 	tileTestMap[3][5] = true
@@ -12,8 +12,8 @@ func TestSetMap(t *testing.T) {
 	controller := new(Controller)
 	controller.InitController(tileTestMap)
 
-	for i := 0; i < 25; i++ {
-		for j := 0; j < 25; j++ {
+	for i := 0; i < MAX_SIZE; i++ {
+		for j := 0; j < MAX_SIZE; j++ {
 			var expNeighbours [4]bool = expectedNeighbours(tileTestMap, i, j)
 			if !doesMeetExpectation(expNeighbours, controller.tiles[i][j]) {
 				t.Error("Does not meet expectation")
@@ -37,7 +37,7 @@ func doesMeetExpectation(check [4]bool, tiile Tile) bool {
 	return true
 }
 
-func expectedNeighbours(tileMap [25][25]bool, x, y int) [4]bool {
+func expectedNeighbours(tileMap [MAX_SIZE][MAX_SIZE]bool, x, y int) [4]bool {
 	var res [4]bool
 	for i := 0; i < 4; i++ {
 		tx, ty := getIndices(i)

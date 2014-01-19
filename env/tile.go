@@ -8,11 +8,11 @@ const (
 	LEFT  = 3
 
 	/* STATES */
-	CLEAN = 0
-	DIRTY = 1
+	CLEAN = false
+	DIRTY = true
 )
 
-type TileState int
+type TileState bool
 
 /* Public interface for the Tile structures.
  * Provides only read-access to neighbours and states.
@@ -21,7 +21,12 @@ type ITile interface {
 	GetNeighbour(direction int) ITile
 	GetState() TileState
 
+<<<<<<< HEAD
+	setNeighbour(direction int, neigh Tile) bool
+	setState(state TileState)
+=======
 	setNeighbour(direction int, neigh ITile) bool
+>>>>>>> 721cdeebdd2ae23e3f22a57825a80960bea10805
 }
 
 type t_tile struct {
@@ -56,4 +61,8 @@ func (this *t_tile) setNeighbour(direction int, neigh ITile) bool {
 	}
 
 	return false
+}
+
+func (this *tile) setState(state TileState) {
+	this.state = state
 }
