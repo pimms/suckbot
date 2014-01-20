@@ -7,7 +7,7 @@ import (
 
 type t_pathnode struct {
 	parent *t_pathnode
-	tile   env.ITile
+	tile   *t_tilewrapper
 	g      int
 	h      int
 }
@@ -16,9 +16,9 @@ func (t t_pathnode) f() int {
 	return t.g + t.h
 }
 
-func (t t_pathnode) manhattanDistance(other t_pathnode) int {
-	tx, ty := t.tile.GetIndices()
-	ox, oy := other.tile.GetIndices()
+func (t t_pathnode) manhattanDistance(other *t_pathnode) int {
+	tx, ty := t.tile.tile.GetIndices()
+	ox, oy := other.tile.tile.GetIndices()
 	return util.Absi(tx-ox) + util.Absi(ty-oy)
 }
 
@@ -26,8 +26,10 @@ func (t t_pathnode) manhattanDistance(other t_pathnode) int {
  * properly find a path
  */
 type t_pf_state struct {
-	open   []*t_pathnode
-	closed []*t_pathnode
+	open      []*t_pathnode
+	closed    []*t_pathnode
+	nodemap   [env.MAX_SIZE][env.MAX_SIZE]t_pathnode
+	startNode *t_pathnode
 }
 
 func remove(slice []*t_pathnode, element *t_pathnode) []*t_pathnode {
@@ -42,9 +44,25 @@ func remove(slice []*t_pathnode, element *t_pathnode) []*t_pathnode {
 	return slice
 }
 
+func iselement(slice []*t_pathnode, element *t_pathnode) bool {
+	for i := 0; i < len(slice); i++ {
+		if slice[i] == element {
+			return true
+		}
+	}
+
+	return false
+}
+
 func (t *t_pf_state) init(maxNodes int) {
 	t.open = make([]*t_pathnode, 0, maxNodes)
 	t.closed = make([]*t_pathnode, 0, maxNodes)
+}
+
+func (t *t_pf_state) setStart(start *t_tilewrapper) {
+	x, y := start.tile.GetIndices()
+	t.startNode = &t.nodemap[x][y]
+	t.addToOpen(t.startNode)
 }
 
 func (t *t_pf_state) addToOpen(node *t_pathnode) {
@@ -56,10 +74,89 @@ func (t *t_pf_state) addToClosed(node *t_pathnode) {
 	t.closed = append(t.closed, node)
 }
 
+func (t *t_pf_state) isOpen(node *t_pathnode) bool {
+	return iselement(t.open, node)
+}
+
+func (t *t_pf_state) isClosed(node *t_pathnode) bool {
+	return iselement(t.closed, node)
+}
+
+func (t *t_pf_state) getPathnode(tilewrap *t_tilewrapper) *t_pathnode {
+	x, y := tilewrap.tile.GetIndices()
+
+	return &t.nodemap[x][y]
+}
+
 /* Returns the direction the agent should take in order to
  * successfully arrive at the end-tile.
  */
-func PathFind(start, end env.ITile, heuristics bool) env.Direction {
+func PathFind(start, end *t_tilewrapper,
+	tilestate *t_tilestate, heuristics bool) env.Direction {
+	var pfstate t_pf_state
+	var node *t_pathnode
+	var success bool
+
+	pfstate.init(env.MAX_SIZE * env.MAX_SIZE)
+	pfstate.setStart(start)
+
+	node = pfstate.startNode
+
+	for len(pfstate.open) != 0 {
+		// Find the node with the lowest value for g
+		// from the open list
+		node = pfstate.open[0]
+		for i := 1; i < len(pfstate.open); i++ {
+			if pfstate.open[i].g < node.g {
+				node = pfstate.open[i]
+			}
+		}
+
+		// Stop searching when we've added the destination
+		// to the closed list
+		pfstate.addToClosed(node)
+		if node.tile == end {
+			success = true
+			break
+		}
+
+		for i := 0; i < 4; i++ {
+			var dir env.Direction = env.Direction(i)
+			var status Status = tilestate.GetTileStatus(node.tile.tile, dir)
+
+			if status == TILE_DISCOVERED {
+				var wrapper *t_tilewrapper
+				var neighbour *t_pathnode
+
+				wrapper = tilestate.GetTile(node.tile, dir)
+				neighbour = pfstate.getPathnode(wrapper)
+
+				if pfstate.isOpen(neighbour) {
+					neighbour.parent = node
+					neighbour.g = node.g
+				} else if !pfstate.isClosed(neighbour) {
+					pfstate.addToOpen(neighbour)
+					neighbour.parent = node
+					neighbour.g = node.g
+				}
+			}
+		}
+	}
+
+	if success && node.parent != nil {
+		for node.parent != nil {
+			node = node.parent
+		}
+
+		// Get the relative position
+		x0, y0 := node.tile.tile.GetIndices()
+		x1, y1 := node.parent.tile.tile.GetIndices()
+		x := x0 - x1
+		y := y0 - y1
+
+		return env.GetDirection(x, y)
+	}
+
 	return env.NONE
 }
 

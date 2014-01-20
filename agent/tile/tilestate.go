@@ -70,3 +70,16 @@ func (t *t_tilestate) GetTileStatus(tile env.ITile, dir env.Direction) Status {
 		return TILE_UNKOWN
 	}
 }
+
+func (t *t_tilestate) GetTile(tile *t_tilewrapper,
+	dir env.Direction) *t_tilewrapper {
+
+	dx, dy := env.GetIndices(dir)
+	x, y := tile.tile.GetIndices()
+
+	if env.ValidIndex(x+dx, y+dy) {
+		return &t.tiles[x+dx][y+dy]
+	}
+
+	return nil
+}
