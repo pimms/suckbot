@@ -117,6 +117,26 @@ func (c *Controller) initSlice() {
 	}
 }
 
+func GetDirection(x, y int) Direction {
+	if x == 0 && y == 1 {
+		return UP
+	}
+
+	if x == 1 && y == 0 {
+		return RIGHT
+	}
+
+	if x == 0 && y == -1 {
+		return DOWN
+	}
+
+	if x == -1 && y == 0 {
+		return LEFT
+	}
+
+	return NONE
+}
+
 func GetIndices(dir Direction) (int, int) {
 	switch dir {
 	case UP:
