@@ -72,13 +72,38 @@ func TestPathfinding(t *testing.T) {
 
 	var start *t_tilewrapper
 	var end *t_tilewrapper
+	var dir env.Direction
+
 	start = &tilestate.tiles[0][0]
 	end = &tilestate.tiles[2][0]
 
-	dir := PathFind(start, end, tilestate)
-
+	dir = PathFind(start, end, tilestate)
 	if dir != env.UP {
 		t.Errorf("Expected %d, got %d\n", env.UP, dir)
+	}
+
+	start = &tilestate.tiles[0][1]
+	dir = PathFind(start, end, tilestate)
+	if dir != env.UP {
+		t.Errorf("Expected %d, got %d\n", env.UP, dir)
+	}
+
+	start = &tilestate.tiles[0][2]
+	dir = PathFind(start, end, tilestate)
+	if dir != env.RIGHT {
+		t.Errorf("Expected %d, got %d\n", env.RIGHT, dir)
+	}
+
+	start = &tilestate.tiles[2][2]
+	dir = PathFind(start, end, tilestate)
+	if dir != env.DOWN {
+		t.Errorf("Expected %d, got %d\n", env.DOWN, dir)
+	}
+
+	start = &tilestate.tiles[2][0]
+	dir = PathFind(start, end, tilestate)
+	if dir != env.NONE {
+		t.Errorf("Expected %d, got %d\n", env.NONE, dir)
 	}
 }
 

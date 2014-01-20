@@ -60,14 +60,16 @@ func (t *t_pf_state) init(maxNodes int) {
 }
 
 func (t *t_pf_state) setStart(start *t_tilewrapper) {
-	x, y := start.tile.GetIndices()
-	t.startNode = &t.nodemap[x][y]
+	startx, starty := start.tile.GetIndices()
+	t.startNode = &t.nodemap[startx][starty]
 	t.addToOpen(t.startNode)
 
 	for x := 0; x < env.MAX_SIZE; x++ {
 		for y := 0; y < env.MAX_SIZE; y++ {
+			// Map the manhattan distance
 			node := &t.nodemap[x][y]
-			node.h = manhattanDistance(t.startNode, node)
+			node.h = util.Absi(startx-x) +
+				util.Absi(starty-y)
 		}
 	}
 }
@@ -75,7 +77,7 @@ func (t *t_pf_state) setStart(start *t_tilewrapper) {
 func (t *t_pf_state) setTilestate(state *t_tilestate) {
 	for x := 0; x < env.MAX_SIZE; x++ {
 		for y := 0; y < env.MAX_SIZE; y++ {
-			t.nodemap[x][y] = &state.tiles[x][y]
+			t.nodemap[x][y].tile = &state.tiles[x][y]
 		}
 	}
 }
@@ -159,7 +161,7 @@ func PathFind(start, end *t_tilewrapper, tilestate *t_tilestate) env.Direction {
 	}
 
 	if success && node.parent != nil {
-		for node.parent != nil {
+		for node.parent.parent != nil {
 			node = node.parent
 		}
 
