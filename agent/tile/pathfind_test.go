@@ -1,6 +1,9 @@
 package tile
 
-import "testing"
+import (
+	"github.com/pimms/suckbot/env"
+	"testing"
+)
 
 func TestRemove(t *testing.T) {
 	item0 := new(t_pathnode)
@@ -60,4 +63,66 @@ func TestAddToClosed(t *testing.T) {
 		t.Errorf("The closed node it's not my node. " +
 			"It's just some node who thinks 'closed' is it's list.")
 	}
+}
+
+func TestPathfinding(t *testing.T) {
+	//var cont *env.Controller
+	var tilestate *t_tilestate
+	_, tilestate = pathfindEnvironment(true)
+
+	var start *t_tilewrapper
+	var end *t_tilewrapper
+	start = &tilestate.tiles[0][0]
+	end = &tilestate.tiles[2][0]
+
+	dir := PathFind(start, end, tilestate)
+
+	if dir != env.UP {
+		t.Errorf("Expected %d, got %d\n", env.UP, dir)
+	}
+}
+
+func pathfindEnvironment(discoverAll bool) (*env.Controller,
+	*t_tilestate) {
+	var cont *env.Controller
+	var tile *t_tilestate
+	var tileMap [env.MAX_SIZE][env.MAX_SIZE]bool
+
+	tileMap[0][0] = true
+	tileMap[0][1] = true
+	tileMap[0][2] = true
+	tileMap[1][2] = true
+	tileMap[2][2] = true
+	tileMap[2][1] = true
+	tileMap[2][0] = true
+
+	cont = new(env.Controller)
+	cont.InitController(tileMap)
+
+	tile = new(t_tilestate)
+	tile.AddDiscovery(cont.GetStartingTile())
+
+	if discoverAll {
+		t := cont.GetStartingTile()
+
+		t = t.GetNeighbour(env.UP) // 0 1
+		tile.AddDiscovery(t)
+
+		t = t.GetNeighbour(env.UP) // 0 2
+		tile.AddDiscovery(t)
+
+		t = t.GetNeighbour(env.RIGHT) // 1 2
+		tile.AddDiscovery(t)
+
+		t = t.GetNeighbour(env.RIGHT) // 2 2
+		tile.AddDiscovery(t)
+
+		t = t.GetNeighbour(env.DOWN) // 2 1
+		tile.AddDiscovery(t)
+
+		t = t.GetNeighbour(env.DOWN)
+		tile.AddDiscovery(t) // 2 0
+	}
+
+	return cont, tile
 }

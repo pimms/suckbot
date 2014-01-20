@@ -16,10 +16,10 @@ func (t t_pathnode) f() int {
 	return t.g + t.h
 }
 
-func (t t_pathnode) manhattanDistance(other *t_pathnode) int {
-	tx, ty := t.tile.tile.GetIndices()
-	ox, oy := other.tile.tile.GetIndices()
-	return util.Absi(tx-ox) + util.Absi(ty-oy)
+func manhattanDistance(a, b *t_pathnode) int {
+	ax, ay := a.tile.tile.GetIndices()
+	bx, by := b.tile.tile.GetIndices()
+	return util.Absi(ax-bx) + util.Absi(ay-by)
 }
 
 /* Struct managing the variables required to
@@ -63,6 +63,21 @@ func (t *t_pf_state) setStart(start *t_tilewrapper) {
 	x, y := start.tile.GetIndices()
 	t.startNode = &t.nodemap[x][y]
 	t.addToOpen(t.startNode)
+
+	for x := 0; x < env.MAX_SIZE; x++ {
+		for y := 0; y < env.MAX_SIZE; y++ {
+			node := &t.nodemap[x][y]
+			node.h = manhattanDistance(t.startNode, node)
+		}
+	}
+}
+
+func (t *t_pf_state) setTilestate(state *t_tilestate) {
+	for x := 0; x < env.MAX_SIZE; x++ {
+		for y := 0; y < env.MAX_SIZE; y++ {
+			t.nodemap[x][y] = &state.tiles[x][y]
+		}
+	}
 }
 
 func (t *t_pf_state) addToOpen(node *t_pathnode) {
@@ -91,23 +106,23 @@ func (t *t_pf_state) getPathnode(tilewrap *t_tilewrapper) *t_pathnode {
 /* Returns the direction the agent should take in order to
  * successfully arrive at the end-tile.
  */
-func PathFind(start, end *t_tilewrapper,
-	tilestate *t_tilestate, heuristics bool) env.Direction {
+func PathFind(start, end *t_tilewrapper, tilestate *t_tilestate) env.Direction {
 	var pfstate t_pf_state
 	var node *t_pathnode
 	var success bool
 
 	pfstate.init(env.MAX_SIZE * env.MAX_SIZE)
+	pfstate.setTilestate(tilestate)
 	pfstate.setStart(start)
 
 	node = pfstate.startNode
 
 	for len(pfstate.open) != 0 {
-		// Find the node with the lowest value for g
+		// Find the node with the lowest value for f()
 		// from the open list
 		node = pfstate.open[0]
 		for i := 1; i < len(pfstate.open); i++ {
-			if pfstate.open[i].g < node.g {
+			if pfstate.open[i].f() < node.f() {
 				node = pfstate.open[i]
 			}
 		}
