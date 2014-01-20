@@ -48,7 +48,7 @@ func (t *t_tilestate) AddDiscovery(tile env.ITile) {
 	t.tiles[x][y].explored = true
 }
 
-func (t *t_tilestate) GetTileStatus(tile env.ITile, dir int) Status {
+func (t *t_tilestate) GetTileStatus(tile env.ITile, dir env.Direction) Status {
 	var x, y int
 
 	x, y = tile.GetIndices()
