@@ -107,30 +107,6 @@ func (t *t_pf_state) getPathnode(tilewrap *t_tilewrapper) *t_pathnode {
 	return &t.nodemap[x][y]
 }
 
-func (t *t_pf_state) processNode(node *t_pathnode, tilestate *t_tilestate) {
-	for i := 0; i < 4; i++ {
-		var dir env.Direction = env.Direction(i)
-		var status Status = tilestate.GetTileStatus(node.tile.tile, dir)
-
-		if status == TILE_DISCOVERED {
-			var wrapper *t_tilewrapper
-			var neighbour *t_pathnode
-
-			wrapper = tilestate.GetTile(node.tile, dir)
-			neighbour = t.getPathnode(wrapper)
-
-			if t.isOpen(neighbour) {
-				neighbour.parent = node
-				neighbour.g = node.g
-			} else if !t.isClosed(neighbour) {
-				t.addToOpen(neighbour)
-				neighbour.parent = node
-				neighbour.g = node.g
-			}
-		}
-	}
-}
-
 /* Returns the direction the agent should take in order to
  * successfully arrive at the end-tile.
  */
@@ -163,7 +139,27 @@ func PathFind(start, end *t_tilewrapper, tilestate *t_tilestate) env.Direction {
 			break
 		}
 
-		pfstate.processNode(node, tilestate)
+		for i := 0; i < 4; i++ {
+			var dir env.Direction = env.Direction(i)
+			var status Status = tilestate.GetTileStatus(node.tile.tile, dir)
+
+			if status == TILE_DISCOVERED {
+				var wrapper *t_tilewrapper
+				var neighbour *t_pathnode
+
+				wrapper = tilestate.GetTile(node.tile, dir)
+				neighbour = pfstate.getPathnode(wrapper)
+
+				if pfstate.isOpen(neighbour) {
+					neighbour.parent = node
+					neighbour.g = node.g
+				} else if !pfstate.isClosed(neighbour) {
+					pfstate.addToOpen(neighbour)
+					neighbour.parent = node
+					neighbour.g = node.g
+				}
+			}
+		}
 	}
 
 	if success && node.parent != nil {
@@ -183,6 +179,63 @@ func PathFind(start, end *t_tilewrapper, tilestate *t_tilestate) env.Direction {
 	return env.NONE
 }
 
-func TileFind(base env.ITile, goal Status, context t_tilestate) env.Direction {
+func TileFind(start *t_tilewrapper, goal Status, tilestate *t_tilestate) env.Direction {
+	var pfstate t_pf_state
+	var node *t_pathnode
+
+	pfstate.init(env.MAX_SIZE * env.MAX_SIZE)
+	pfstate.setTilestate(tilestate)
+	pfstate.setStart(start, false)
+
+	node = pfstate.startNode
+
+	for len(pfstate.open) != 0 {
+		// Find the node with the lowest value for f()
+		// from the open list. As no heuristics are used,
+		// f() effectively returns the value of g.
+		node = pfstate.open[0]
+		for i := 1; i < len(pfstate.open); i++ {
+			if pfstate.open[i].f() < node.f() {
+				node = pfstate.open[i]
+			}
+		}
+
+		pfstate.addToClosed(node)
+
+		for i := 0; i < 4; i++ {
+			var dir env.Direction = env.Direction(i)
+			var status Status = tilestate.GetTileStatus(node.tile.tile, dir)
+
+			if status == goal {
+				// We cannot use the undiscovered tile in pathfinding
+				// because it hasn't been discovered yet. The link
+				// between the t_tilewrapper and the env.ITile is nil.
+				// However, if we started at a neighbouring tile, we
+				// already know the direction.
+				if start == node.tile {
+					return dir
+				}
+
+				// Return A* to the closest neighbouring tile (node).
+				return PathFind(start, node.tile, tilestate)
+			} else if status == TILE_DISCOVERED {
+				var wrapper *t_tilewrapper
+				var neighbour *t_pathnode
+
+				wrapper = tilestate.GetTile(node.tile, dir)
+				neighbour = pfstate.getPathnode(wrapper)
+
+				if pfstate.isOpen(neighbour) {
+					neighbour.parent = node
+					neighbour.g = node.g
+				} else if !pfstate.isClosed(neighbour) {
+					pfstate.addToOpen(neighbour)
+					neighbour.parent = node
+					neighbour.g = node.g
+				}
+			}
+		}
+	}
+
 	return env.NONE
 }
