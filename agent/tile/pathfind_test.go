@@ -33,8 +33,8 @@ func TestAddToOpen(t *testing.T) {
 	state.addToOpen(itemOpen)
 
 	if len(state.open) != 1 {
-		t.Errorf("Unexpected length: %d (expected 1)\n")
-		len(state.open)
+		t.Errorf("Unexpected length: %d (expected 1)\n",
+			len(state.open))
 	}
 
 	if state.open[0] != itemOpen {
@@ -107,6 +107,40 @@ func TestPathfinding(t *testing.T) {
 	}
 }
 
+func TestTileFinding(t *testing.T) {
+	var tilestate *t_tilestate
+	var dir env.Direction
+	var tile *t_tilewrapper
+
+	_, tilestate = pathfindEnvironment(false)
+	tile = &tilestate.tiles[0][0]
+
+	expect := []env.Direction{
+		env.UP, env.UP,
+		env.RIGHT, env.RIGHT,
+		env.DOWN, env.DOWN,
+		env.NONE}
+
+	for i := 0; i < len(expect); i++ {
+		var x, y, dx, dy int
+
+		dir = TileFind(tile, TILE_UNKOWN, tilestate)
+		x, y = tile.tile.GetIndices()
+		dx, dy = env.GetIndices(dir)
+
+		if dir != expect[i] {
+			t.Errorf("Expected %d, got %d! ", expect[i], dir)
+			return
+		}
+
+		if dir != env.NONE {
+			// Discover and move to the new tile
+			tilestate.AddDiscovery(tile.tile.GetNeighbour(dir))
+			tile = &tilestate.tiles[x+dx][y+dy]
+		}
+	}
+}
+
 func pathfindEnvironment(discoverAll bool) (*env.Controller,
 	*t_tilestate) {
 	var cont *env.Controller
@@ -126,6 +160,15 @@ func pathfindEnvironment(discoverAll bool) (*env.Controller,
 
 	tile = new(t_tilestate)
 	tile.AddDiscovery(cont.GetStartingTile())
+
+	// Mark all walls where requred
+	for x := 0; x < env.MAX_SIZE; x++ {
+		for y := 0; y < env.MAX_SIZE; y++ {
+			if !tileMap[x][y] {
+				tile.tiles[x][y].explored = true
+			}
+		}
+	}
 
 	if discoverAll {
 		t := cont.GetStartingTile()
