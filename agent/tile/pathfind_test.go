@@ -161,7 +161,7 @@ func pathfindEnvironment(discoverAll bool) (*env.Controller,
 	tile = new(t_tilestate)
 	tile.AddDiscovery(cont.GetStartingTile())
 
-	// Mark all walls where requred
+	// Mark all walls where there are no tiles
 	for x := 0; x < env.MAX_SIZE; x++ {
 		for y := 0; y < env.MAX_SIZE; y++ {
 			if !tileMap[x][y] {
