@@ -1,6 +1,7 @@
 package agent
 
 import (
+	"github.com/pimms/suckbot/agent/tile"
 	"github.com/pimms/suckbot/env"
 )
 

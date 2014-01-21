@@ -32,7 +32,7 @@ func main() {
 				break
 			}
 
-			// Render
+			renderer.renderFrame(controller, a)
 			time.Sleep(500 * time.Millisecond)
 		}
 	}

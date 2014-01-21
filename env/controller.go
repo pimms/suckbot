@@ -12,6 +12,12 @@ type Controller struct {
 	permDirt uint64
 }
 
+// Peek function to allow a rendering object to draw
+// the tiles.
+func (c *Controller) CHEAT_GetTiles() [MAX_SIZE][MAX_SIZE]ITile {
+	return c.tiles
+}
+
 func (c *Controller) InitController(tileMap [MAX_SIZE][MAX_SIZE]bool) {
 
 	for i := 0; i < MAX_SIZE; i++ {
