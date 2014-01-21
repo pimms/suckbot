@@ -33,8 +33,8 @@ func TestAddToOpen(t *testing.T) {
 	state.addToOpen(itemOpen)
 
 	if len(state.open) != 1 {
-		t.Errorf("Unexpected length: %d (expected 1)\n",
-			len(state.open))
+		t.Errorf("Unexpected length: %d (expected 1)\n")
+		len(state.open)
 	}
 
 	if state.open[0] != itemOpen {
