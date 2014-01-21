@@ -49,5 +49,6 @@ func createController() *env.Controller {
 	tileMap[1][1] = true
 
 	controller.InitController(tileMap)
+	controller.Permute(0, 5)
 	return controller
 }

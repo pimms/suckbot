@@ -13,13 +13,13 @@ const (
 	TILE_INVALID    Status = 3
 )
 
-/* The t_tilestate holds the data about the discovered
+/* The TileState holds the data about the discovered
  * tiles and the status of the neighbours as well.
  *
  * Tiles are stored in an N by N array, and each tile has
  * it's indices associated with it.
  */
-type t_tilestate struct {
+type TileState struct {
 	tiles [env.MAX_SIZE][env.MAX_SIZE]t_tilewrapper
 }
 
@@ -36,7 +36,7 @@ type t_tilewrapper struct {
 	Implementation
 =======================
 */
-func (t *t_tilestate) AddDiscovery(tile env.ITile) {
+func (t *TileState) AddDiscovery(tile env.ITile) {
 	var x, y int
 	var twrap t_tilewrapper
 
@@ -48,7 +48,7 @@ func (t *t_tilestate) AddDiscovery(tile env.ITile) {
 	t.tiles[x][y].explored = true
 }
 
-func (t *t_tilestate) GetTileStatus(tile env.ITile, dir env.Direction) Status {
+func (t *TileState) GetTileStatus(tile env.ITile, dir env.Direction) Status {
 	var x, y int
 
 	x, y = tile.GetIndices()
@@ -56,6 +56,10 @@ func (t *t_tilestate) GetTileStatus(tile env.ITile, dir env.Direction) Status {
 	x += dx
 	y += dy
 
+	return t.GetTileStatusAtCoord(x, y)
+}
+
+func (t *TileState) GetTileStatusAtCoord(x, y int) Status {
 	if !env.ValidIndex(x, y) {
 		return TILE_INVALID
 	}
@@ -71,7 +75,7 @@ func (t *t_tilestate) GetTileStatus(tile env.ITile, dir env.Direction) Status {
 	}
 }
 
-func (t *t_tilestate) GetTile(tile *t_tilewrapper,
+func (t *TileState) GetTile(tile *t_tilewrapper,
 	dir env.Direction) *t_tilewrapper {
 
 	dx, dy := env.GetIndices(dir)

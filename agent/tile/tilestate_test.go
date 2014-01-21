@@ -21,7 +21,7 @@ func createDummyEnvController() *env.Controller {
 }
 
 func _TestUndiscoveredByDefault(t *testing.T) {
-	state := new(t_tilestate)
+	state := new(TileState)
 
 	for x := 0; x < env.MAX_SIZE; x++ {
 		for y := 0; y < env.MAX_SIZE; y++ {
@@ -34,7 +34,7 @@ func _TestUndiscoveredByDefault(t *testing.T) {
 
 func _TestAddTile(t *testing.T) {
 	var cont *env.Controller
-	var state t_tilestate
+	var state TileState
 	var tile env.ITile
 	var neigh env.ITile
 	var x, y int
@@ -62,7 +62,7 @@ func _TestAddTile(t *testing.T) {
 
 func TestTileStatus(t *testing.T) {
 	var cont *env.Controller
-	var state t_tilestate
+	var state TileState
 	var base env.ITile
 	var result Status
 

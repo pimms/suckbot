@@ -76,7 +76,7 @@ func (t *t_pf_state) setStart(start *t_tilewrapper, heuristics bool) {
 	}
 }
 
-func (t *t_pf_state) setTilestate(state *t_tilestate) {
+func (t *t_pf_state) setTilestate(state *TileState) {
 	for x := 0; x < env.MAX_SIZE; x++ {
 		for y := 0; y < env.MAX_SIZE; y++ {
 			t.nodemap[x][y].tile = &state.tiles[x][y]
@@ -110,7 +110,7 @@ func (t *t_pf_state) getPathnode(tilewrap *t_tilewrapper) *t_pathnode {
 /* Returns the direction the agent should take in order to
  * successfully arrive at the end-tile.
  */
-func PathFind(start, end *t_tilewrapper, tilestate *t_tilestate) env.Direction {
+func PathFind(start, end *t_tilewrapper, tilestate *TileState) env.Direction {
 	var pfstate t_pf_state
 	var node *t_pathnode
 	var success bool
@@ -179,7 +179,7 @@ func PathFind(start, end *t_tilewrapper, tilestate *t_tilestate) env.Direction {
 	return env.NONE
 }
 
-func TileFind(start *t_tilewrapper, goal Status, tilestate *t_tilestate) env.Direction {
+func TileFind(start *t_tilewrapper, goal Status, tilestate *TileState) env.Direction {
 	var pfstate t_pf_state
 	var node *t_pathnode
 

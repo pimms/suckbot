@@ -67,7 +67,7 @@ func TestAddToClosed(t *testing.T) {
 
 func TestPathfinding(t *testing.T) {
 	//var cont *env.Controller
-	var tilestate *t_tilestate
+	var tilestate *TileState
 	_, tilestate = pathfindEnvironment(true)
 
 	var start *t_tilewrapper
@@ -108,7 +108,7 @@ func TestPathfinding(t *testing.T) {
 }
 
 func TestTileFinding(t *testing.T) {
-	var tilestate *t_tilestate
+	var tilestate *TileState
 	var dir env.Direction
 	var tile *t_tilewrapper
 
@@ -142,9 +142,9 @@ func TestTileFinding(t *testing.T) {
 }
 
 func pathfindEnvironment(discoverAll bool) (*env.Controller,
-	*t_tilestate) {
+	*TileState) {
 	var cont *env.Controller
-	var tile *t_tilestate
+	var tile *TileState
 	var tileMap [env.MAX_SIZE][env.MAX_SIZE]bool
 
 	tileMap[0][0] = true
@@ -158,7 +158,7 @@ func pathfindEnvironment(discoverAll bool) (*env.Controller,
 	cont = new(env.Controller)
 	cont.InitController(tileMap)
 
-	tile = new(t_tilestate)
+	tile = new(TileState)
 	tile.AddDiscovery(cont.GetStartingTile())
 
 	// Mark all walls where there are no tiles
