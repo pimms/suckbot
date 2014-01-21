@@ -1,17 +1,41 @@
 package main
 
 import (
-	"fmt"
+	"flag"
 	"github.com/pimms/suckbot/agent"
 	"github.com/pimms/suckbot/env"
+	"time"
 )
 
 func main() {
-	fmt.Println("Hello, world!")
+	var visual = flag.Bool("visual", false,
+		"Visualize the agent")
+	var rounds = flag.Int("rounds", 1000,
+		"The number of rounds to simulate")
+	flag.Parse()
 
+	var renderer t_renderer
+	if *visual {
+		renderer.createWindow()
+	}
+
+	// Initialize the controller and the agent
 	controller := createController()
 	a := new(agent.Agent)
 	a.Initialize(controller.GetStartingTile())
+
+	for i := 0; i < *rounds; i++ {
+		// Tick
+		if *visual {
+			renderer.pollEvents()
+			if renderer.shouldExit {
+				break
+			}
+
+			// Render
+			time.Sleep(500 * time.Millisecond)
+		}
+	}
 }
 
 func createController() *env.Controller {
