@@ -6,13 +6,22 @@ import (
 )
 
 type Agent struct {
-	tileState tile.TileState
+	tileState   tile.TileState
+	currentTile env.ITile
 }
 
 func (a *Agent) CHEAT_GetTileStatus(x, y int) tile.Status {
 	return a.tileState.GetTileStatusAtCoord(x, y)
 }
 
+func (a *Agent) CHEAT_GetCurrentTile() env.ITile {
+	return a.currentTile
+}
+
 func (a *Agent) Initialize(startTile env.ITile) {
+	a.tileState.AddDiscovery(startTile)
+}
+
+func (a *Agent) Tick() {
 
 }

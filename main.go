@@ -25,7 +25,8 @@ func main() {
 	a.Initialize(controller.GetStartingTile())
 
 	for i := 0; i < *rounds; i++ {
-		// Tick
+		a.Tick()
+
 		if *visual {
 			renderer.pollEvents()
 			if renderer.shouldExit {

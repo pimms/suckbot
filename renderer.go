@@ -91,7 +91,8 @@ func (t *t_renderer) renderFrame(cont *env.Controller, agent *agent.Agent) {
 
 	// Draw the agent
 	// TODO: Use the agent's actual position
-	t.drawAgent(0, env.MAX_SIZE-1)
+	x, y := agent.CHEAT_GetCurrentTile().GetIndices()
+	t.drawAgent(x, env.MAX_SIZE-y-1)
 
 	t.renderer.Present()
 }
