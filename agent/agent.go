@@ -20,8 +20,15 @@ func (a *Agent) CHEAT_GetCurrentTile() env.ITile {
 
 func (a *Agent) Initialize(startTile env.ITile) {
 	a.tileState.AddDiscovery(startTile)
+	a.currentTile = startTile
 }
 
 func (a *Agent) Tick() {
+	if a.currentTile.GetState() == env.DIRTY {
+		a.vacuumCurrent()
+	}
+}
 
+func (a *Agent) vacuumCurrent() {
+	a.currentTile.OnVacuum()
 }

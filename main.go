@@ -25,8 +25,6 @@ func main() {
 	a.Initialize(controller.GetStartingTile())
 
 	for i := 0; i < *rounds; i++ {
-		a.Tick()
-
 		if *visual {
 			renderer.pollEvents()
 			if renderer.shouldExit {
@@ -36,6 +34,8 @@ func main() {
 			renderer.renderFrame(controller, a)
 			time.Sleep(500 * time.Millisecond)
 		}
+
+		a.Tick()
 	}
 }
 
@@ -50,6 +50,6 @@ func createController() *env.Controller {
 	tileMap[1][1] = true
 
 	controller.InitController(tileMap)
-	controller.Permute(0, 5)
+	controller.Permute(1, 31)
 	return controller
 }

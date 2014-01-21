@@ -24,6 +24,7 @@ type ITile interface {
 	GetNeighbour(direction Direction) ITile
 	GetState() TileState
 	GetIndices() (int, int)
+	OnVacuum()
 
 	setState(state TileState)
 	setNeighbour(direction Direction, neigh ITile) bool
@@ -52,6 +53,10 @@ func (this *t_tile) GetNeighbour(direction Direction) ITile {
 
 func (this *t_tile) GetIndices() (int, int) {
 	return this.xpos, this.ypos
+}
+
+func (this *t_tile) OnVacuum() {
+	this.setState(CLEAN)
 }
 
 /* Private methods */

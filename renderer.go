@@ -84,7 +84,7 @@ func (t *t_renderer) renderFrame(cont *env.Controller, agent *agent.Agent) {
 			status = agent.CHEAT_GetTileStatus(x, y)
 
 			if status == tile.TILE_UNKOWN {
-				t.drawQuestionMark(x, y)
+				t.drawQuestionMark(x, env.MAX_SIZE-y-1)
 			}
 		}
 	}
