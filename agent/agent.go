@@ -24,6 +24,10 @@ func (a *Agent) Initialize(startTile env.ITile) {
 }
 
 func (a *Agent) Tick() {
+	// TODO:
+	// Return the ACTION from a function analyzing
+	// the current state, and have another function
+	// actually execute the action.
 	if a.currentTile.GetState() == env.DIRTY {
 		a.vacuumCurrent()
 	}
