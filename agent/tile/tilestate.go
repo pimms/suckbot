@@ -37,7 +37,7 @@ func (t *TileWrapper) GetITile() env.ITile {
 
 /*
 =======================
-	Implementation
+Implementation
 =======================
 */
 func (t *TileState) AddDiscovery(tile env.ITile) {
@@ -50,6 +50,13 @@ func (t *TileState) AddDiscovery(tile env.ITile) {
 	twrap.tile = tile
 	t.tiles[x][y] = twrap
 	t.tiles[x][y].explored = true
+}
+
+func (t *TileState) AddDiscoveryNil(x, y int) {
+	if env.ValidIndex(x, y) {
+		t.tiles[x][y].tile = nil
+		t.tiles[x][y].explored = true
+	}
 }
 
 func (t *TileState) GetTileStatus(tile env.ITile, dir env.Direction) Status {

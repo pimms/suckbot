@@ -49,6 +49,8 @@ func (a *Agent) Tick() {
 }
 
 func (a *Agent) printAction(action int) {
+	fmt.Print("Selected action:\t")
+
 	switch action {
 	case 0:
 		fmt.Print("UP")
@@ -63,6 +65,8 @@ func (a *Agent) printAction(action int) {
 	case 5:
 		fmt.Print("NoOP")
 	}
+
+	fmt.Print("\n")
 }
 
 func (a *Agent) getAction() int {
@@ -71,9 +75,16 @@ func (a *Agent) getAction() int {
 	}
 
 	if !a.fullyExplored {
-		return int(a.getSearchDirection())
-	} else if a.fullyExplored {
+		// If there are no tiles left to explore,
+		// fall through to the "a.fullyExplored"-case.
+		var dir = int(a.getSearchDirection())
+		if dir != int(env.NONE) {
+			return dir
+		}
+	}
 
+	if a.fullyExplored {
+		fmt.Println("Time to suck, innit??? m8 ")
 	}
 
 	return NOOP
@@ -85,14 +96,45 @@ func (a *Agent) performAction(action int) {
 
 	case SUCK:
 		a.vacuumCurrent()
+
+	case int(env.UP):
+		fallthrough
+	case int(env.RIGHT):
+		fallthrough
+	case int(env.DOWN):
+		fallthrough
+	case int(env.LEFT):
+		a.moveInDirection(env.Direction(action))
 	}
 }
 
 func (a *Agent) getSearchDirection() env.Direction {
-	return tile.TileFind(a.currentTile, tile.TILE_UNKOWN, &a.tileState)
+	dir := tile.TileFind(a.currentTile,
+		tile.TILE_UNKOWN, &a.tileState)
+
+	if dir == env.NONE {
+		a.fullyExplored = true
+	}
+
+	return dir
 }
 
 func (a *Agent) vacuumCurrent() {
 	// Clean the tile I'm currently standing on
 	a.currentTile.GetITile().OnVacuum()
+}
+
+func (a *Agent) moveInDirection(dir env.Direction) {
+	var itile env.ITile
+
+	itile = a.currentTile.GetITile().GetNeighbour(dir)
+
+	if itile != nil {
+		a.tileState.AddDiscovery(itile)
+		a.currentTile = a.tileState.GetWrapper(itile)
+	} else {
+		x, y := a.currentTile.GetITile().GetIndices()
+		dx, dy := env.GetIndices(dir)
+		a.tileState.AddDiscoveryNil(x+dx, y+dy)
+	}
 }

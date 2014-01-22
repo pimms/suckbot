@@ -8,8 +8,12 @@ import (
 )
 
 func main() {
-	var visual = flag.Bool("visual", false,	"Visualize the agent")
-	var rounds = flag.Int("rounds", 1000, "The number of rounds to simulate")
+	var visual = flag.Bool("visual", false,
+		"Visualize the agent")
+	var rounds = flag.Int("rounds", 1000,
+		"The number of rounds to simulate")
+	var delay = flag.Int("delay", 500,
+		"The delay between each tick in visual mode")
 	flag.Parse()
 
 	var renderer t_renderer
@@ -30,7 +34,7 @@ func main() {
 			}
 
 			renderer.renderFrame(controller, a)
-			time.Sleep(500 * time.Millisecond)
+			time.Sleep(time.Duration(*delay) * time.Millisecond)
 		}
 
 		a.Tick()
@@ -46,8 +50,16 @@ func createController() *env.Controller {
 	tileMap[1][0] = true
 	tileMap[2][0] = true
 	tileMap[1][1] = true
+	tileMap[1][2] = true
+	tileMap[1][3] = true
+	tileMap[0][3] = true
+	tileMap[2][3] = true
+	tileMap[2][2] = true
+	tileMap[2][4] = true
+	tileMap[2][5] = true
+	tileMap[3][5] = true
 
 	controller.InitController(tileMap)
-	controller.Permute(1, 14)
+	controller.Permute(0, 15)
 	return controller
 }
