@@ -68,6 +68,12 @@ func (c Controller) GetStartingTile() ITile {
 	return c.tileSlice[c.permPos]
 }
 
+func (c *Controller) Tick() {
+	for i := 0; i < len(c.tileSlice); i++ {
+		c.tileSlice[i].tick()
+	}
+}
+
 func (c *Controller) joinTiles() {
 	var thisTile ITile
 	var neighbour ITile

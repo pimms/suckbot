@@ -37,6 +37,7 @@ func main() {
 			time.Sleep(time.Duration(*delay) * time.Millisecond)
 		}
 
+		controller.Tick()
 		a.Tick()
 	}
 }

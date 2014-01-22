@@ -1,5 +1,7 @@
 package env
 
+import "math/rand"
+
 type Direction int
 
 const (
@@ -13,6 +15,12 @@ const (
 	/* STATES */
 	CLEAN = false
 	DIRTY = true
+
+	// After "CLEAN_MIN" iterations, there is a 
+	// "DIRTY_PERC"*100 chance of becoming 
+	// dirty.
+	l_CLEAN_MIN = 10
+	l_DIRTY_PERC = 0.1
 )
 
 type TileState bool
@@ -28,6 +36,8 @@ type ITile interface {
 
 	setState(state TileState)
 	setNeighbour(direction Direction, neigh ITile) bool
+	timeSinceClean() int
+	tick()
 }
 
 type t_tile struct {
@@ -36,6 +46,7 @@ type t_tile struct {
 
 	xpos int
 	ypos int
+	cleanTime int
 }
 
 /* Interface ITile implementation */
@@ -57,6 +68,7 @@ func (this *t_tile) GetIndices() (int, int) {
 
 func (this *t_tile) OnVacuum() {
 	this.setState(CLEAN)
+	this.cleanTime = 0
 }
 
 /* Private methods */
@@ -77,4 +89,18 @@ func (this *t_tile) setNeighbour(direction Direction, neigh ITile) bool {
 
 func (this *t_tile) setState(state TileState) {
 	this.state = state
+}
+
+func (this *t_tile) timeSinceClean() int {
+	return this.cleanTime
+}
+
+func (this *t_tile) tick() {
+	this.cleanTime++
+
+	if this.cleanTime > l_CLEAN_MIN {
+		if rand.Float32() <= l_DIRTY_PERC {
+			this.setState(DIRTY)
+		}
+	}
 }
