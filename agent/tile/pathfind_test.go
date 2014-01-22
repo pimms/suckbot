@@ -70,8 +70,8 @@ func TestPathfinding(t *testing.T) {
 	var tilestate *TileState
 	_, tilestate = pathfindEnvironment(true)
 
-	var start *t_tilewrapper
-	var end *t_tilewrapper
+	var start *TileWrapper
+	var end *TileWrapper
 	var dir env.Direction
 
 	start = &tilestate.tiles[0][0]
@@ -110,7 +110,7 @@ func TestPathfinding(t *testing.T) {
 func TestTileFinding(t *testing.T) {
 	var tilestate *TileState
 	var dir env.Direction
-	var tile *t_tilewrapper
+	var tile *TileWrapper
 
 	_, tilestate = pathfindEnvironment(false)
 	tile = &tilestate.tiles[0][0]

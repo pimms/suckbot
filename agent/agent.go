@@ -5,9 +5,21 @@ import (
 	"github.com/pimms/suckbot/env"
 )
 
+const (
+	SUCK = 4
+	NOOP = 5
+
+	// The directional constants are defined
+	// in the "env" package, under the names
+	// env.UP, env.LEFT and so on. They are
+	// used as actions when the agent should
+	// move.
+)
+
 type Agent struct {
-	tileState   tile.TileState
-	currentTile env.ITile
+	tileState     tile.TileState
+	fullyExplored bool
+	currentTile   *tile.TileWrapper
 }
 
 func (a *Agent) CHEAT_GetTileStatus(x, y int) tile.Status {
@@ -15,24 +27,52 @@ func (a *Agent) CHEAT_GetTileStatus(x, y int) tile.Status {
 }
 
 func (a *Agent) CHEAT_GetCurrentTile() env.ITile {
-	return a.currentTile
+	return a.currentTile.GetITile()
 }
 
 func (a *Agent) Initialize(startTile env.ITile) {
 	a.tileState.AddDiscovery(startTile)
-	a.currentTile = startTile
+
+	//fock teh ploice
+	a.currentTile = a.tileState.GetWrapper(startTile)
 }
 
 func (a *Agent) Tick() {
-	// TODO:
-	// Return the ACTION from a function analyzing
-	// the current state, and have another function
-	// actually execute the action.
-	if a.currentTile.GetState() == env.DIRTY {
+	var action int
+
+	action = a.getAction()
+
+	a.performAction(action)
+}
+
+func (a *Agent) getAction() int {
+	if a.currentTile.GetITile().GetState() == env.DIRTY {
+		return SUCK
+	}
+
+	if !a.fullyExplored {
+		return int(a.getSearchDirection())
+	} else if a.fullyExplored {
+
+	}
+
+	return NOOP
+}
+
+func (a *Agent) performAction(action int) {
+	switch action {
+	case NOOP:
+
+	case SUCK:
 		a.vacuumCurrent()
 	}
 }
 
+func (a *Agent) getSearchDirection() env.Direction {
+	return tile.TileFind(a.currentTile, tile.TILE_UNKOWN, &a.tileState)
+}
+
 func (a *Agent) vacuumCurrent() {
-	a.currentTile.OnVacuum()
+	// Clean the tile I'm currently standing on
+	a.currentTile.GetITile().OnVacuum()
 }

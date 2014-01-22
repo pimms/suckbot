@@ -7,7 +7,7 @@ import (
 
 type t_pathnode struct {
 	parent *t_pathnode
-	tile   *t_tilewrapper
+	tile   *TileWrapper
 	g      int
 	h      int
 }
@@ -59,7 +59,7 @@ func (t *t_pf_state) init(maxNodes int) {
 	t.closed = make([]*t_pathnode, 0, maxNodes)
 }
 
-func (t *t_pf_state) setStart(start *t_tilewrapper, heuristics bool) {
+func (t *t_pf_state) setStart(start *TileWrapper, heuristics bool) {
 	startx, starty := start.tile.GetIndices()
 	t.startNode = &t.nodemap[startx][starty]
 	t.addToOpen(t.startNode)
@@ -101,7 +101,7 @@ func (t *t_pf_state) isClosed(node *t_pathnode) bool {
 	return iselement(t.closed, node)
 }
 
-func (t *t_pf_state) getPathnode(tilewrap *t_tilewrapper) *t_pathnode {
+func (t *t_pf_state) getPathnode(tilewrap *TileWrapper) *t_pathnode {
 	x, y := tilewrap.tile.GetIndices()
 
 	return &t.nodemap[x][y]
@@ -110,7 +110,7 @@ func (t *t_pf_state) getPathnode(tilewrap *t_tilewrapper) *t_pathnode {
 /* Returns the direction the agent should take in order to
  * successfully arrive at the end-tile.
  */
-func PathFind(start, end *t_tilewrapper, tilestate *TileState) env.Direction {
+func PathFind(start, end *TileWrapper, tilestate *TileState) env.Direction {
 	var pfstate t_pf_state
 	var node *t_pathnode
 	var success bool
@@ -144,7 +144,7 @@ func PathFind(start, end *t_tilewrapper, tilestate *TileState) env.Direction {
 			var status Status = tilestate.GetTileStatus(node.tile.tile, dir)
 
 			if status == TILE_DISCOVERED {
-				var wrapper *t_tilewrapper
+				var wrapper *TileWrapper
 				var neighbour *t_pathnode
 
 				wrapper = tilestate.GetTile(node.tile, dir)
@@ -179,7 +179,7 @@ func PathFind(start, end *t_tilewrapper, tilestate *TileState) env.Direction {
 	return env.NONE
 }
 
-func TileFind(start *t_tilewrapper, goal Status, tilestate *TileState) env.Direction {
+func TileFind(start *TileWrapper, goal Status, tilestate *TileState) env.Direction {
 	var pfstate t_pf_state
 	var node *t_pathnode
 
@@ -209,7 +209,7 @@ func TileFind(start *t_tilewrapper, goal Status, tilestate *TileState) env.Direc
 			if status == goal {
 				// We cannot use the undiscovered tile in pathfinding
 				// because it hasn't been discovered yet. The link
-				// between the t_tilewrapper and the env.ITile is nil.
+				// between the TileWrapper and the env.ITile is nil.
 				// However, if we started at a neighbouring tile, we
 				// already know the direction.
 				if start == node.tile {
@@ -219,7 +219,7 @@ func TileFind(start *t_tilewrapper, goal Status, tilestate *TileState) env.Direc
 				// Return A* to the closest neighbouring tile (node).
 				return PathFind(start, node.tile, tilestate)
 			} else if status == TILE_DISCOVERED {
-				var wrapper *t_tilewrapper
+				var wrapper *TileWrapper
 				var neighbour *t_pathnode
 
 				wrapper = tilestate.GetTile(node.tile, dir)

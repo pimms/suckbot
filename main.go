@@ -8,10 +8,8 @@ import (
 )
 
 func main() {
-	var visual = flag.Bool("visual", false,
-		"Visualize the agent")
-	var rounds = flag.Int("rounds", 1000,
-		"The number of rounds to simulate")
+	var visual = flag.Bool("visual", false,	"Visualize the agent")
+	var rounds = flag.Int("rounds", 1000, "The number of rounds to simulate")
 	flag.Parse()
 
 	var renderer t_renderer
@@ -50,6 +48,6 @@ func createController() *env.Controller {
 	tileMap[1][1] = true
 
 	controller.InitController(tileMap)
-	controller.Permute(1, 31)
+	controller.Permute(1, 14)
 	return controller
 }
