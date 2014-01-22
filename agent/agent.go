@@ -21,6 +21,7 @@ type Agent struct {
 	tileState     tile.TileState
 	fullyExplored bool
 	currentTile   *tile.TileWrapper
+	tileQueue     tile.TileQueue
 }
 
 func (a *Agent) CHEAT_GetTileStatus(x, y int) tile.Status {
@@ -33,6 +34,7 @@ func (a *Agent) CHEAT_GetCurrentTile() env.ITile {
 
 func (a *Agent) Initialize(startTile env.ITile) {
 	a.tileState.AddDiscovery(startTile)
+	a.tileQueue.AddUnique(a.tileState.GetWrapper(startTile))
 
 	//fock teh ploice
 	a.currentTile = a.tileState.GetWrapper(startTile)
@@ -46,6 +48,8 @@ func (a *Agent) Tick() {
 	a.performAction(action)
 
 	a.printAction(action)
+
+	a.tileQueue.MoveToBack(a.currentTile)
 }
 
 func (a *Agent) printAction(action int) {
@@ -75,6 +79,7 @@ func (a *Agent) getAction() int {
 	}
 
 	if !a.fullyExplored {
+		a.tileQueue.AddUnique(a.currentTile)
 		// If there are no tiles left to explore,
 		// fall through to the "a.fullyExplored"-case.
 		var dir = int(a.getSearchDirection())
@@ -84,7 +89,7 @@ func (a *Agent) getAction() int {
 	}
 
 	if a.fullyExplored {
-		fmt.Println("Time to suck, innit??? m8 ")
+		return int(a.getPatrolDirection())
 	}
 
 	return NOOP
@@ -96,7 +101,6 @@ func (a *Agent) performAction(action int) {
 
 	case SUCK:
 		a.vacuumCurrent()
-
 	case int(env.UP):
 		fallthrough
 	case int(env.RIGHT):
@@ -117,6 +121,11 @@ func (a *Agent) getSearchDirection() env.Direction {
 	}
 
 	return dir
+}
+
+func (a *Agent) getPatrolDirection() env.Direction {
+	head := a.tileQueue.GetHead()
+	return tile.PathFind(a.currentTile, head, &a.tileState)
 }
 
 func (a *Agent) vacuumCurrent() {
