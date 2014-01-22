@@ -1,6 +1,7 @@
 package agent
 
 import (
+	"fmt"
 	"github.com/pimms/suckbot/agent/tile"
 	"github.com/pimms/suckbot/env"
 )
@@ -43,6 +44,25 @@ func (a *Agent) Tick() {
 	action = a.getAction()
 
 	a.performAction(action)
+
+	a.printAction(action)
+}
+
+func (a *Agent) printAction(action int) {
+	switch action {
+	case 0:
+		fmt.Print("UP")
+	case 1:
+		fmt.Print("RIGHT")
+	case 2:
+		fmt.Print("DOWN")
+	case 3:
+		fmt.Print("LEFT")
+	case 4:
+		fmt.Print("SUCK")
+	case 5:
+		fmt.Print("NoOP")
+	}
 }
 
 func (a *Agent) getAction() int {
