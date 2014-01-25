@@ -16,10 +16,10 @@ const (
 	CLEAN = false
 	DIRTY = true
 
-	// After "CLEAN_MIN" iterations, there is a 
-	// "DIRTY_PERC"*100 chance of becoming 
+	// After "CLEAN_MIN" iterations, there is a
+	// "DIRTY_PERC"*100 chance of becoming
 	// dirty.
-	l_CLEAN_MIN = 10
+	l_CLEAN_MIN  = 10
 	l_DIRTY_PERC = 0.1
 )
 
@@ -33,10 +33,10 @@ type ITile interface {
 	GetState() TileState
 	GetIndices() (int, int)
 	OnVacuum()
+	TimeSinceClean() int
 
 	setState(state TileState)
 	setNeighbour(direction Direction, neigh ITile) bool
-	timeSinceClean() int
 	tick()
 }
 
@@ -44,8 +44,8 @@ type t_tile struct {
 	neighbours [4]ITile
 	state      TileState
 
-	xpos int
-	ypos int
+	xpos      int
+	ypos      int
 	cleanTime int
 }
 
@@ -71,6 +71,10 @@ func (this *t_tile) OnVacuum() {
 	this.cleanTime = 0
 }
 
+func (this *t_tile) TimeSinceClean() int {
+	return this.cleanTime
+}
+
 /* Private methods */
 func (this *t_tile) setNeighbour(direction Direction, neigh ITile) bool {
 	if direction >= 0 && direction <= 3 {
@@ -89,10 +93,6 @@ func (this *t_tile) setNeighbour(direction Direction, neigh ITile) bool {
 
 func (this *t_tile) setState(state TileState) {
 	this.state = state
-}
-
-func (this *t_tile) timeSinceClean() int {
-	return this.cleanTime
 }
 
 func (this *t_tile) tick() {

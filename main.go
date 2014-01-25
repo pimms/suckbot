@@ -62,18 +62,17 @@ func createController() *env.Controller {
 	var tileMap [env.MAX_SIZE][env.MAX_SIZE]bool
 	tileMap[0][0] = true
 	tileMap[1][0] = true
-	/*
-		tileMap[2][0] = true
-		tileMap[1][1] = true
-		tileMap[1][2] = true
-		tileMap[1][3] = true
-		tileMap[0][3] = true
-		tileMap[2][3] = true
-		tileMap[2][2] = true
-		tileMap[2][4] = true
-		tileMap[2][5] = true
-		tileMap[3][5] = true
-	*/
+	tileMap[2][0] = true
+	tileMap[1][1] = true
+	tileMap[1][2] = true
+	tileMap[1][3] = true
+	tileMap[0][3] = true
+	tileMap[2][3] = true
+	tileMap[2][2] = true
+	tileMap[2][4] = true
+	tileMap[2][5] = true
+	tileMap[3][5] = true
+
 	controller.InitController(tileMap)
 	return controller
 }
