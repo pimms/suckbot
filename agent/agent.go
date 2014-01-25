@@ -41,7 +41,7 @@ func (a *Agent) Initialize(startTile env.ITile) {
 	a.currentTile = a.tileState.GetWrapper(startTile)
 }
 
-func (a *Agent) Tick() {
+func (a *Agent) Tick(perf *SimPerf) {
 	var action int
 
 	action = a.getAction()

@@ -40,7 +40,7 @@ func main() {
 			}
 
 			controller.Tick()
-			a.Tick()
+			a.Tick(nil)
 		}
 
 		// Increment the permutations - if no more permutations
