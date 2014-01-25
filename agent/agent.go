@@ -44,12 +44,10 @@ func (a *Agent) Tick() {
 	var action int
 
 	action = a.getAction()
-
 	a.performAction(action)
 
-	a.printAction(action)
-
 	a.tileQueue.MoveToBack(a.currentTile)
+	a.printAction(action)
 }
 
 func (a *Agent) printAction(action int) {
@@ -101,14 +99,10 @@ func (a *Agent) performAction(action int) {
 
 	case SUCK:
 		a.vacuumCurrent()
-	case int(env.UP):
-		fallthrough
-	case int(env.RIGHT):
-		fallthrough
-	case int(env.DOWN):
-		fallthrough
-	case int(env.LEFT):
-		a.moveInDirection(env.Direction(action))
+	case int(env.UP):		fallthrough
+	case int(env.RIGHT):	fallthrough
+	case int(env.DOWN):		fallthrough
+	case int(env.LEFT):		a.moveInDirection(env.Direction(action))
 	}
 }
 

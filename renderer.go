@@ -5,6 +5,7 @@ import (
 	"github.com/pimms/suckbot/agent"
 	"github.com/pimms/suckbot/agent/tile"
 	"github.com/pimms/suckbot/env"
+	"fmt"
 )
 
 const (
@@ -62,6 +63,8 @@ func (t *t_renderer) renderFrame(cont *env.Controller, agent *agent.Agent) {
 
 	tiles = cont.CHEAT_GetTiles()
 
+	t.renderer.SetDrawColor(0, 0, 0, 255)
+
 	t.renderer.Clear()
 
 	// Draw the tiles
@@ -92,6 +95,7 @@ func (t *t_renderer) renderFrame(cont *env.Controller, agent *agent.Agent) {
 	// Draw the agent
 	// TODO: Use the agent's actual position
 	x, y := agent.CHEAT_GetCurrentTile().GetIndices()
+	fmt.Printf("Agentpos: %d %d\n", x, y)
 	t.drawAgent(x, env.MAX_SIZE-y-1)
 
 	t.renderer.Present()
@@ -110,7 +114,6 @@ func (t *t_renderer) drawTile(x, y int, r, g, b, a uint8) {
 	rect.H = TILE_SIZE
 
 	t.renderer.FillRect(&rect)
-	t.renderer.SetDrawColor(0, 0, 0, 255)
 }
 
 func (t *t_renderer) drawQuestionMark(x, y int) {
@@ -140,8 +143,6 @@ func (t *t_renderer) drawQuestionMark(x, y int) {
 			int(ptA.X), int(ptA.Y),
 			int(ptB.X), int(ptB.Y))
 	}
-
-	t.renderer.SetDrawColor(0, 0, 0, 255)
 }
 
 func (t *t_renderer) drawAgent(x, y int) {
@@ -153,5 +154,4 @@ func (t *t_renderer) drawAgent(x, y int) {
 
 	t.renderer.SetDrawColor(0, 0, 255, 255)
 	t.renderer.FillRect(&rect)
-	t.renderer.SetDrawColor(0, 0, 0, 255)
 }

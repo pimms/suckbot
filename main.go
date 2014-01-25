@@ -7,12 +7,17 @@ import (
 	"time"
 )
 
+// COMMAND LINE ARGUMENT VARIABLES
+var visual *bool
+var rounds *int
+var delay *int
+
 func main() {
-	var visual = flag.Bool("visual", false,
+	visual = flag.Bool("visual", false,
 		"Visualize the agent")
-	var rounds = flag.Int("rounds", 1000,
+	rounds = flag.Int("rounds", 1000,
 		"The number of rounds to simulate")
-	var delay = flag.Int("delay", 500,
+	delay = flag.Int("delay", 500,
 		"The delay between each tick in visual mode")
 	flag.Parse()
 
@@ -26,19 +31,34 @@ func main() {
 	a := new(agent.Agent)
 	a.Initialize(controller.GetStartingTile())
 
-	for i := 0; i < *rounds; i++ {
-		if *visual {
-			renderer.pollEvents()
-			if renderer.shouldExit {
-				break
+	var posPerm, dirtPerm uint64
+	for controller.CanPermute(posPerm, dirtPerm) {
+
+		// Run the simulation
+		for i := 0; i < *rounds; i++ {
+			if *visual {
+				renderer.pollEvents()
+				if renderer.shouldExit {
+					break
+				}
+
+				renderer.renderFrame(controller, a)
+				time.Sleep(time.Duration(*delay) * time.Millisecond)
 			}
 
-			renderer.renderFrame(controller, a)
-			time.Sleep(time.Duration(*delay) * time.Millisecond)
+			controller.Tick()
+			a.Tick()
 		}
 
-		controller.Tick()
-		a.Tick()
+		// Increment the permutations - if no more permutations
+		// are allowed with the incremented dirtPerm, increment
+		// posPerm. If posPerm now holds an invalid value, the
+		// embracing for-loop will terminate.
+		dirtPerm++
+		if !controller.CanPermute(posPerm, dirtPerm) {
+			dirtPerm = 0
+			posPerm++
+		}
 	}
 }
 
