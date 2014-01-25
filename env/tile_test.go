@@ -10,7 +10,8 @@ func TestValidDirections(t *testing.T) {
 
 	// Ensure that 0-4 are non-nil
 	for i := 0; i < 4; i++ {
-		n := myTile.GetNeighbour(i)
+		var dir = Direction(i)
+		n := myTile.GetNeighbour(dir)
 
 		if n == nil {
 			t.Errorf("Unexpected nil neighbour: %i\n", i)

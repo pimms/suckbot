@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/pimms/suckbot/agent/tile"
 	"github.com/pimms/suckbot/env"
+	"github.com/pimms/suckbot/util"
 )
 
 const (
@@ -51,6 +52,10 @@ func (a *Agent) Tick() {
 }
 
 func (a *Agent) printAction(action int) {
+	if !util.Verbose() {
+		return
+	}
+
 	fmt.Print("Selected action:\t")
 
 	switch action {
@@ -99,10 +104,14 @@ func (a *Agent) performAction(action int) {
 
 	case SUCK:
 		a.vacuumCurrent()
-	case int(env.UP):		fallthrough
-	case int(env.RIGHT):	fallthrough
-	case int(env.DOWN):		fallthrough
-	case int(env.LEFT):		a.moveInDirection(env.Direction(action))
+	case int(env.UP):
+		fallthrough
+	case int(env.RIGHT):
+		fallthrough
+	case int(env.DOWN):
+		fallthrough
+	case int(env.LEFT):
+		a.moveInDirection(env.Direction(action))
 	}
 }
 

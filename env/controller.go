@@ -1,5 +1,10 @@
 package env
 
+import (
+	"fmt"
+	"github.com/pimms/suckbot/util"
+)
+
 const (
 	MAX_SIZE = 8
 )
@@ -37,11 +42,22 @@ func (c *Controller) InitController(tileMap [MAX_SIZE][MAX_SIZE]bool) {
 }
 
 func (c Controller) CanPermute(posIdx, dirtIdx uint64) bool {
-	var count uint = uint(len(c.tileSlice))
-	var upos uint = uint(posIdx)
-	var uidx uint = uint(dirtIdx)
+	// The permutation number cannot exceed the absolute
+	// maximum.
+	if c.getPermNumber(posIdx, dirtIdx) >= c.getMaxPermCount() {
+		return false
+	}
 
-	return (count > upos && (1<<count) > uidx)
+	// the pos and dirt variables must still be valid, however.
+	if dirtIdx >= (1 << uint64(len(c.tileSlice))) {
+		return false
+	}
+
+	if posIdx >= uint64(len(c.tileSlice)) {
+		return false
+	}
+
+	return true
 }
 
 func (c *Controller) Permute(posIdx, dirtIdx uint64) {
@@ -62,6 +78,11 @@ func (c *Controller) Permute(posIdx, dirtIdx uint64) {
 			c.tileSlice[i].setState(CLEAN)
 		}
 	}
+
+	fmt.Printf("[PERMUTATION  %d /  %d ]\n",
+		c.getPermNumber(posIdx, dirtIdx)+1,
+		c.getMaxPermCount())
+
 }
 
 func (c Controller) GetStartingTile() ITile {
@@ -72,6 +93,22 @@ func (c *Controller) Tick() {
 	for i := 0; i < len(c.tileSlice); i++ {
 		c.tileSlice[i].tick()
 	}
+}
+
+func (c *Controller) getPermNumber(posIdx, dirtIdx uint64) uint64 {
+	return (posIdx)*(1<<uint64(len(c.tileSlice))) + dirtIdx
+}
+
+func (c *Controller) getMaxPermCount() uint64 {
+	// The manual maximum (-1 if undefined)
+	var maxParam int = util.MaxPermutations()
+	if maxParam >= 0 {
+		return uint64(maxParam)
+	}
+
+	// The physical maximum (N * 2^N)
+	var nTiles = uint64(len(c.tileSlice))
+	return nTiles * (1 << nTiles)
 }
 
 func (c *Controller) joinTiles() {

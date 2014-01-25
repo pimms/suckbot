@@ -1,6 +1,9 @@
 package env
 
-import "testing"
+import (
+	"github.com/pimms/suckbot/util"
+	"testing"
+)
 
 func createDummyController() *Controller {
 	var tileTestMap [MAX_SIZE][MAX_SIZE]bool
@@ -44,7 +47,8 @@ func doesMeetExpectation(check [4]bool, tiile ITile) bool {
 	}
 
 	for i := 0; i < 4; i++ {
-		var hasNeighbour bool = tiile.GetNeighbour(i) != nil
+		var dir = Direction(i)
+		var hasNeighbour bool = tiile.GetNeighbour(dir) != nil
 
 		if hasNeighbour != check[i] {
 			return false
@@ -56,8 +60,10 @@ func doesMeetExpectation(check [4]bool, tiile ITile) bool {
 func expectedNeighbours(tileMap [MAX_SIZE][MAX_SIZE]bool, x, y int) [4]bool {
 	var res [4]bool
 	for i := 0; i < 4; i++ {
-		tx, ty := getIndices(i)
-		if validIndex(x+tx, y+ty) {
+		var dir = Direction(i)
+
+		tx, ty := GetIndices(dir)
+		if ValidIndex(x+tx, y+ty) {
 			res[i] = tileMap[x+tx][y+ty]
 		}
 	}
@@ -79,6 +85,36 @@ func TestTileIndices(t *testing.T) {
 						x, y, ax, ay)
 				}
 			}
+		}
+	}
+}
+
+func TestPermuteCalculations(t *testing.T) {
+	util.BindArgs()
+	c := createDummyController()
+
+	var expected, actual uint64
+
+	// There are 6 tiles, the expected number of
+	// permutations is 6*2^6 = 6*64 = 384
+	expected = 384
+	actual = c.getMaxPermCount()
+	if expected != actual {
+		t.Errorf("Expected %d, got %d!\n", expected, actual)
+	}
+
+	expected = 0
+
+	var pos, dirt uint64
+	for pos = 0; pos < 6; pos++ {
+		for dirt = 0; dirt < 64; dirt++ {
+			actual = c.getPermNumber(pos, dirt)
+			if actual != expected {
+				t.Errorf("Expected %d, got %d! (p=%d,d=%d)\n",
+					expected, actual, pos, dirt)
+			}
+
+			expected++
 		}
 	}
 }
