@@ -2,7 +2,7 @@ package env
 
 import (
 	"fmt"
-	"github.com/pimms/suckbot/util"
+	"github.com/pimms/suckbot/arg"
 )
 
 const (
@@ -44,7 +44,7 @@ func (c *Controller) InitController(tileMap [MAX_SIZE][MAX_SIZE]bool) {
 func (c Controller) CanPermute(posIdx, dirtIdx uint64) bool {
 	// The permutation number cannot exceed the absolute
 	// maximum.
-	if c.getPermNumber(posIdx, dirtIdx) >= c.getMaxPermCount() {
+	if c.GetPermNumber(posIdx, dirtIdx) >= c.GetMaxPermCount() {
 		return false
 	}
 
@@ -80,8 +80,8 @@ func (c *Controller) Permute(posIdx, dirtIdx uint64) {
 	}
 
 	fmt.Printf("[PERMUTATION  %d /  %d ]\n",
-		c.getPermNumber(posIdx, dirtIdx)+1,
-		c.getMaxPermCount())
+		c.GetPermNumber(posIdx, dirtIdx)+1,
+		c.GetMaxPermCount())
 
 }
 
@@ -95,13 +95,13 @@ func (c *Controller) Tick() {
 	}
 }
 
-func (c *Controller) getPermNumber(posIdx, dirtIdx uint64) uint64 {
+func (c *Controller) GetPermNumber(posIdx, dirtIdx uint64) uint64 {
 	return (posIdx)*(1<<uint64(len(c.tileSlice))) + dirtIdx
 }
 
-func (c *Controller) getMaxPermCount() uint64 {
+func (c *Controller) GetMaxPermCount() uint64 {
 	// The manual maximum (-1 if undefined)
-	var maxParam int = util.MaxPermutations()
+	var maxParam int = arg.MaxPermutations()
 	if maxParam >= 0 {
 		return uint64(maxParam)
 	}

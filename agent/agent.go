@@ -3,6 +3,7 @@ package agent
 import (
 	"fmt"
 	"github.com/pimms/suckbot/agent/tile"
+	"github.com/pimms/suckbot/arg"
 	"github.com/pimms/suckbot/env"
 	"github.com/pimms/suckbot/util"
 )
@@ -45,14 +46,14 @@ func (a *Agent) Tick(perf *util.SimPerf) {
 	var action int
 
 	action = a.getAction()
-	a.performAction(action)
+	a.performAction(action, perf)
 
 	a.tileQueue.MoveToBack(a.currentTile)
 	a.printAction(action)
 }
 
 func (a *Agent) printAction(action int) {
-	if !util.Verbose() {
+	if !arg.Verbose() || !arg.Visual() {
 		return
 	}
 
@@ -98,42 +99,34 @@ func (a *Agent) getAction() int {
 	return NOOP
 }
 
-func (a *Agent) registerScore(action int, perf *util.SimPerf) {
-	var tile env.ITile = a.currentTile.GetITile()
-
+func (a *Agent) performAction(action int, perf *util.SimPerf) {
 	switch action {
 	case NOOP:
 
 	case SUCK:
-		tile := a.currentTile.GetITile()
-		perf.AgentCleaned(tile)
-
-	case int(env.UP):
-		fallthrough
-	case int(env.RIGHT):
-		fallthrough
-	case int(env.DOWN):
-		fallthrough
-	case int(env.LEFT):
-		dirty := tile.GetStatus() == env.DIRTY
-		perf.AgentMoved(dirty)
-	}
-}
-
-func (a *Agent) performAction(action int) {
-	switch action {
-	case NOOP:
-
-	case SUCK:
+		perf.AgentCleaned(a.currentTile.GetITile())
 		a.vacuumCurrent()
+
 	case int(env.UP):
 		fallthrough
+
 	case int(env.RIGHT):
 		fallthrough
+
 	case int(env.DOWN):
 		fallthrough
+
 	case int(env.LEFT):
-		a.moveInDirection(env.Direction(action))
+		var moved bool
+		moved = a.moveInDirection(env.Direction(action))
+
+		// If the agent successfully moved in the direction,
+		// notify the SimPerf of the dirt-status of the tile.
+		if moved {
+			tile := a.currentTile.GetITile()
+			perf.AgentEnteredTile(tile.GetState() == env.DIRTY)
+			perf.AgentMoved()
+		}
 	}
 }
 
@@ -158,7 +151,7 @@ func (a *Agent) vacuumCurrent() {
 	a.currentTile.GetITile().OnVacuum()
 }
 
-func (a *Agent) moveInDirection(dir env.Direction) {
+func (a *Agent) moveInDirection(dir env.Direction) bool {
 	var itile env.ITile
 
 	itile = a.currentTile.GetITile().GetNeighbour(dir)
@@ -166,9 +159,11 @@ func (a *Agent) moveInDirection(dir env.Direction) {
 	if itile != nil {
 		a.tileState.AddDiscovery(itile)
 		a.currentTile = a.tileState.GetWrapper(itile)
+		return true
 	} else {
 		x, y := a.currentTile.GetITile().GetIndices()
 		dx, dy := env.GetIndices(dir)
 		a.tileState.AddDiscoveryNil(x+dx, y+dy)
+		return false
 	}
 }

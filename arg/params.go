@@ -1,4 +1,4 @@
-package util
+package arg
 
 import "flag"
 

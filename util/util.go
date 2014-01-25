@@ -57,3 +57,16 @@ func Absi(a int) int {
 	}
 	return a
 }
+
+func StrW(s string, l int) string {
+	if len(s) > l {
+		s = s[:l-3]
+		s = s + "..."
+	} else {
+		for len(s) != l {
+			s = s + " "
+		}
+	}
+
+	return s
+}

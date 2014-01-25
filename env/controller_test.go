@@ -98,7 +98,7 @@ func TestPermuteCalculations(t *testing.T) {
 	// There are 6 tiles, the expected number of
 	// permutations is 6*2^6 = 6*64 = 384
 	expected = 384
-	actual = c.getMaxPermCount()
+	actual = c.GetMaxPermCount()
 	if expected != actual {
 		t.Errorf("Expected %d, got %d!\n", expected, actual)
 	}
@@ -108,7 +108,7 @@ func TestPermuteCalculations(t *testing.T) {
 	var pos, dirt uint64
 	for pos = 0; pos < 6; pos++ {
 		for dirt = 0; dirt < 64; dirt++ {
-			actual = c.getPermNumber(pos, dirt)
+			actual = c.GetPermNumber(pos, dirt)
 			if actual != expected {
 				t.Errorf("Expected %d, got %d! (p=%d,d=%d)\n",
 					expected, actual, pos, dirt)
@@ -150,5 +150,35 @@ func TestTileCanPermute(t *testing.T) {
 
 	if cont.CanPermute(0, 64) {
 		t.Errorf("Able to permute with pos=0 and dirt=64")
+	}
+}
+
+func TestTileAge(t *testing.T) {
+	c := createDummyController()
+	var expected, actual int
+
+	if len(c.tileSlice) == 0 {
+		t.Errorf("Empty tile-slice in Controller")
+	}
+
+	c.Tick()
+	c.Tick()
+	expected = 2
+
+	for i := 0; i < len(c.tileSlice); i++ {
+		actual = c.tileSlice[i].TimeSinceClean()
+		if actual != expected {
+			t.Errorf("Expected %d, got %d", expected, actual)
+		}
+
+		c.tileSlice[i].OnVacuum()
+	}
+
+	expected = 0
+	for i := 0; i < len(c.tileSlice); i++ {
+		actual = c.tileSlice[i].TimeSinceClean()
+		if actual != expected {
+			t.Errorf("Expected %d, got %d", expected, actual)
+		}
 	}
 }

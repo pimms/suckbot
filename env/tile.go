@@ -1,6 +1,8 @@
 package env
 
-import "math/rand"
+import (
+	"math/rand"
+)
 
 type Direction int
 
@@ -44,9 +46,9 @@ type t_tile struct {
 	neighbours [4]ITile
 	state      TileState
 
-	xpos      int
-	ypos      int
-	cleanTime int
+	xpos  int
+	ypos  int
+	timer int
 }
 
 /* Interface ITile implementation */
@@ -68,11 +70,14 @@ func (this *t_tile) GetIndices() (int, int) {
 
 func (this *t_tile) OnVacuum() {
 	this.setState(CLEAN)
-	this.cleanTime = 0
 }
 
 func (this *t_tile) TimeSinceClean() int {
-	return this.cleanTime
+	if this.state != DIRTY {
+		return 0
+	}
+
+	return this.timer
 }
 
 /* Private methods */
@@ -93,12 +98,13 @@ func (this *t_tile) setNeighbour(direction Direction, neigh ITile) bool {
 
 func (this *t_tile) setState(state TileState) {
 	this.state = state
+	this.timer = 0
 }
 
 func (this *t_tile) tick() {
-	this.cleanTime++
+	this.timer++
 
-	if this.cleanTime > l_CLEAN_MIN {
+	if this.timer > l_CLEAN_MIN && this.state == CLEAN {
 		if rand.Float32() <= l_DIRTY_PERC {
 			this.setState(DIRTY)
 		}

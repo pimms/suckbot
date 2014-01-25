@@ -1,10 +1,9 @@
 package util
 
-// Interface to avoid import cycle
-// with /env.
-type PerfTile interface {
-	TimeSinceClean() int
-}
+import (
+	"github.com/pimms/suckbot/arg"
+	"github.com/pimms/suckbot/env"
+)
 
 type SimPerf struct {
 	totalScore int
@@ -27,36 +26,36 @@ type SimPerf struct {
 	maxDirtyTicks int
 }
 
-func (s SimPerf) GetTotalScore() int {
-	return s.totalScore
+func GetTotalScore(s SimPerf) float64 {
+	return float64(s.totalScore)
 }
 
-func (s SimPerf) GetAgentMoves() int {
-	return s.agentMoves
+func GetAgentMoves(s SimPerf) float64 {
+	return float64(s.agentMoves)
 }
 
-func (s SimPerf) GetAgentCleans() int {
-	return s.agentCleans
+func GetAgentCleans(s SimPerf) float64 {
+	return float64(s.agentCleans)
 }
 
-func (s SimPerf) GetDirtyEntries() float64 {
-	return s.dirtyEntry
+func GetDirtyEntries(s SimPerf) float64 {
+	return float64(s.dirtyEntry)
 }
 
-func (s SimPerf) GetAvgDirtyTicks() float64 {
-	return s.avgDirtyTicks
+func GetAvgDirtyTicks(s SimPerf) float64 {
+	return float64(s.avgDirtyTicks)
 }
 
-func (s SimPerf) GetMinDirtyTicks() int {
-	return s.minDirtyTicks
+func GetMinDirtyTicks(s SimPerf) float64 {
+	return float64(s.minDirtyTicks)
 }
 
-func (s SimPerf) GetMaxDirtyTicks() int {
-	return s.maxDirtyTicks
+func GetMaxDirtyTicks(s SimPerf) float64 {
+	return float64(s.maxDirtyTicks)
 }
 
-func (s *SimPerf) tileCleaned(tile PerfTile) {
-	time := tile.TimeSinceClean()
+func (s *SimPerf) tileCleaned(tile env.ITile) {
+	var time int = tile.TimeSinceClean()
 
 	if s.minDirtyTicks == 0 || time < s.minDirtyTicks {
 		s.minDirtyTicks = time
@@ -67,7 +66,7 @@ func (s *SimPerf) tileCleaned(tile PerfTile) {
 	}
 
 	var ftime = float64(time)
-	s.avgDirtyTicks += ftime / float64(NumRounds())
+	s.avgDirtyTicks += ftime / float64(arg.NumRounds())
 }
 
 /*
@@ -82,13 +81,13 @@ func (s *SimPerf) AgentMoved() {
 	s.agentMoves++
 }
 
-func (s *SimPerf) AgentCleaned(tile PerfTile) {
+func (s *SimPerf) AgentCleaned(tile env.ITile) {
 	s.tileCleaned(tile)
 	s.agentCleans++
 }
 
 func (s *SimPerf) AgentEnteredTile(dirty bool) {
 	if dirty {
-		s.dirtyEntry += 1.0 / float64(NumRounds())
+		s.dirtyEntry += 1.0 / float64(arg.NumRounds())
 	}
 }
