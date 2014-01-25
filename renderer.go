@@ -1,11 +1,11 @@
 package main
 
 import (
-	"github.com/jackyb/go-sdl2/sdl"
+	"bitbucket.org/dooots/go-sdl2/sdl"
+	"fmt"
 	"github.com/pimms/suckbot/agent"
 	"github.com/pimms/suckbot/agent/tile"
 	"github.com/pimms/suckbot/env"
-	"fmt"
 )
 
 const (
@@ -13,49 +13,53 @@ const (
 )
 
 type t_renderer struct {
-	window     *sdl.Window
-	surface    *sdl.Surface
-	renderer   *sdl.Renderer
+	window     sdl.Window
+	surface    sdl.Surface
+	renderer   sdl.Renderer
 	shouldExit bool
 
 	texQuestion *sdl.Texture
 }
 
 func (t *t_renderer) pollEvents() {
-	for e := sdl.PollEvent(); e != nil; e = sdl.PollEvent() {
-		switch e.(type) {
-		case *sdl.QuitEvent:
+	event := &sdl.EventUnion{}
+
+	for sdl.PollEvent(event) == 1 {
+		switch event.Type {
+		case sdl.QUIT:
 			t.shouldExit = true
 		}
 	}
 }
 
 func (t *t_renderer) createWindow() {
-	if t.window == nil {
-		t.window = sdl.CreateWindow("SuckBot",
-			sdl.WINDOWPOS_UNDEFINED,
-			sdl.WINDOWPOS_UNDEFINED,
-			800, 600, sdl.WINDOW_SHOWN)
+	err := sdl.Init(sdl.INIT_EVERYTHING)
+	if err != nil {
+		fmt.Println("Error initializing SDL")
+	}
 
-		t.surface = t.window.GetSurface()
+	t.window, err = sdl.CreateWindow(
+		"SuckBot",
+		sdl.WINDOWPOS_UNDEFINED,
+		sdl.WINDOWPOS_UNDEFINED,
+		800, 600,
+		sdl.WINDOW_SHOWN)
+	if err != nil {
+		fmt.Println("Failed to create window")
+	}
 
-		t.renderer = sdl.CreateRenderer(t.window, -1,
-			sdl.RENDERER_ACCELERATED)
+	t.renderer, err = t.window.CreateRenderer(
+		-1, sdl.RENDERER_ACCELERATED)
+	if err != nil {
+		fmt.Println("Failed to create renderer")
 	}
 }
 
 func (t *t_renderer) destroyWindow() {
-	if t.renderer != nil {
-		t.renderer.Destroy()
-	}
+	t.renderer.Destroy()
+	t.window.Destroy()
 
-	if t.window != nil {
-		t.window.Destroy()
-	}
-
-	t.window = nil
-	t.surface = nil
-	t.renderer = nil
+	sdl.Quit()
 }
 
 func (t *t_renderer) renderFrame(cont *env.Controller, agent *agent.Agent) {
