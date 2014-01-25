@@ -26,6 +26,34 @@ type SimPerf struct {
 	maxDirtyTicks int
 }
 
+func (s SimPerf) GetTotalScore() int {
+	return s.totalScore
+}
+
+func (s SimPerf) GetAgentMoves() int {
+	return s.agentMoves
+}
+
+func (s SimPerf) GetAgentCleans() int {
+	return s.agentCleans
+}
+
+func (s SimPerf) GetDirtyEntries() float64 {
+	return s.dirtyEntry
+}
+
+func (s SimPerf) GetAvgDirtyTicks() int {
+	return s.avgDirtyTicks
+}
+
+func (s SimPerf) GetMinDirtyTicks() int {
+	return s.minDirtyTicks
+}
+
+func (s SimPerf) GetMaxDirtyTicks() int {
+	return s.maxDirtyTicks
+}
+
 func (s *SimPerf) tileCleaned(tile env.ITile) {
 	time := tile.TimeSinceClean()
 
