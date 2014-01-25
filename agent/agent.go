@@ -41,7 +41,7 @@ func (a *Agent) Initialize(startTile env.ITile) {
 	a.currentTile = a.tileState.GetWrapper(startTile)
 }
 
-func (a *Agent) Tick(perf *SimPerf) {
+func (a *Agent) Tick(perf *util.SimPerf) {
 	var action int
 
 	action = a.getAction()
@@ -96,6 +96,28 @@ func (a *Agent) getAction() int {
 	}
 
 	return NOOP
+}
+
+func (a *Agent) registerScore(action int, perf *util.SimPerf) {
+	var tile env.ITile = a.currentTile.GetITile()
+
+	switch action {
+	case NOOP:
+
+	case SUCK:
+		tile := a.currentTile.GetITile()
+		perf.AgentCleaned(tile)
+
+	case int(env.UP):
+		fallthrough
+	case int(env.RIGHT):
+		fallthrough
+	case int(env.DOWN):
+		fallthrough
+	case int(env.LEFT):
+		dirty := tile.GetStatus() == env.DIRTY
+		perf.AgentMoved(dirty)
+	}
 }
 
 func (a *Agent) performAction(action int) {

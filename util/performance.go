@@ -1,9 +1,10 @@
-package main
+package util
 
-import (
-	"github.com/pimms/suckbot/env"
-	"github.com/pimms/suckbot/util"
-)
+// Interface to avoid import cycle
+// with /env.
+type PerfTile interface {
+	TimeSinceClean() int
+}
 
 type SimPerf struct {
 	totalScore int
@@ -42,7 +43,7 @@ func (s SimPerf) GetDirtyEntries() float64 {
 	return s.dirtyEntry
 }
 
-func (s SimPerf) GetAvgDirtyTicks() int {
+func (s SimPerf) GetAvgDirtyTicks() float64 {
 	return s.avgDirtyTicks
 }
 
@@ -54,7 +55,7 @@ func (s SimPerf) GetMaxDirtyTicks() int {
 	return s.maxDirtyTicks
 }
 
-func (s *SimPerf) tileCleaned(tile env.ITile) {
+func (s *SimPerf) tileCleaned(tile PerfTile) {
 	time := tile.TimeSinceClean()
 
 	if s.minDirtyTicks == 0 || time < s.minDirtyTicks {
@@ -66,7 +67,7 @@ func (s *SimPerf) tileCleaned(tile env.ITile) {
 	}
 
 	var ftime = float64(time)
-	s.avgDirtyTicks += ftime / float64(util.GetNumRounds())
+	s.avgDirtyTicks += ftime / float64(NumRounds())
 }
 
 /*
@@ -81,12 +82,13 @@ func (s *SimPerf) AgentMoved() {
 	s.agentMoves++
 }
 
-func (s *SimPerf) AgentCleaned(tile env.ITile) {
+func (s *SimPerf) AgentCleaned(tile PerfTile) {
+	s.tileCleaned(tile)
 	s.agentCleans++
 }
 
 func (s *SimPerf) AgentEnteredTile(dirty bool) {
 	if dirty {
-		s.dirtyEntry += 1.0 / float64(util.NumRounds())
+		s.dirtyEntry += 1.0 / float64(NumRounds())
 	}
 }
