@@ -7,6 +7,9 @@ import (
 
 const (
 	MAX_SIZE = 8
+
+	// Don't allow more than 2^30 permutations
+	MAX_PERM = 1073741824
 )
 
 type Controller struct {
@@ -22,7 +25,6 @@ type Controller struct {
 func (c *Controller) CHEAT_GetTiles() [MAX_SIZE][MAX_SIZE]ITile {
 	return c.tiles
 }
-
 func (c *Controller) InitController(tileMap [MAX_SIZE][MAX_SIZE]bool) {
 
 	for i := 0; i < MAX_SIZE; i++ {
@@ -100,15 +102,25 @@ func (c *Controller) GetPermNumber(posIdx, dirtIdx uint64) uint64 {
 }
 
 func (c *Controller) GetMaxPermCount() uint64 {
+	var retVal uint64 = 0
+
 	// The manual maximum (-1 if undefined)
 	var maxParam int = arg.MaxPermutations()
 	if maxParam >= 0 {
-		return uint64(maxParam)
+		retVal = uint64(maxParam)
+	} else {
+		// The physical maximum (N * 2^N)
+		var nTiles = uint64(len(c.tileSlice))
+		retVal = nTiles * (1 << nTiles)
+	}
+	
+	// Limit the number of permutations to a
+	// human number.
+	if retVal > MAX_PERM {
+		retVal = MAX_PERM
 	}
 
-	// The physical maximum (N * 2^N)
-	var nTiles = uint64(len(c.tileSlice))
-	return nTiles * (1 << nTiles)
+	return retVal
 }
 
 func (c *Controller) joinTiles() {

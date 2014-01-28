@@ -26,6 +26,8 @@ func main() {
 	a.Initialize(controller.GetStartingTile())
 
 	var perfs []util.SimPerf
+	var max = controller.GetMaxPermCount()
+	fmt.Printf("Max permutations: %d\n", max)
 	perfs = make([]util.SimPerf, controller.GetMaxPermCount())
 
 	var posPerm, dirtPerm uint64 = 0, 0
@@ -121,20 +123,8 @@ func printPerfStat(context string,
 func createController() *env.Controller {
 	var controller *env.Controller
 	controller = new(env.Controller)
-
-	var tileMap [env.MAX_SIZE][env.MAX_SIZE]bool
-	tileMap[0][0] = true
-	tileMap[1][0] = true
-	tileMap[2][0] = true
-	tileMap[1][1] = true
-	tileMap[1][2] = true
-	tileMap[1][3] = true
-	tileMap[0][3] = true
-	tileMap[2][3] = true
-	tileMap[2][2] = true
-	tileMap[2][4] = true
-	tileMap[2][5] = true
-	tileMap[3][5] = true
+	
+	var tileMap = env.LoadMap(arg.File())
 
 	controller.InitController(tileMap)
 	return controller

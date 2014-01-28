@@ -21,8 +21,8 @@ const (
 	// After "CLEAN_MIN" iterations, there is a
 	// "DIRTY_PERC"*100 chance of becoming
 	// dirty.
-	l_CLEAN_MIN  = 10
-	l_DIRTY_PERC = 0.1
+	l_CLEAN_MIN  = 15
+	l_DIRTY_PERC = 0.001
 )
 
 type TileState bool

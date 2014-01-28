@@ -5,9 +5,14 @@ import (
 	"github.com/pimms/suckbot/env"
 )
 
-type SimPerf struct {
-	totalScore int
+/* The score of the agent is calculated based on
+ * the following rules:
+ * - Minus one point for each move
+ * - Plus two points for moving into a dirty tile
+ * - Plus one point for cleaning a tile
+ */
 
+type SimPerf struct {
 	// The total number of times the
 	// agent moved
 	agentMoves int
@@ -27,7 +32,13 @@ type SimPerf struct {
 }
 
 func GetTotalScore(s SimPerf) float64 {
-	return float64(s.totalScore)
+	var score float64 = 0.0
+
+	score -= float64(s.agentMoves)
+	score += float64(s.agentCleans)
+	score += s.dirtyEntry * float64(arg.NumRounds())
+
+	return score
 }
 
 func GetAgentMoves(s SimPerf) float64 {
