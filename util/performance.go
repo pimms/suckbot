@@ -8,8 +8,7 @@ import (
 /* The score of the agent is calculated based on
  * the following rules:
  * - Minus one point for each move
- * - Plus two points for moving into a dirty tile
- * - Plus one point for cleaning a tile
+ * - Plus three for cleaning a tile
  */
 
 type SimPerf struct {
@@ -35,8 +34,7 @@ func GetTotalScore(s SimPerf) float64 {
 	var score float64 = 0.0
 
 	score -= float64(s.agentMoves)
-	score += float64(s.agentCleans)
-	score += s.dirtyEntry * float64(arg.NumRounds())
+	score += float64(s.agentCleans) * 3.0
 
 	return score
 }
