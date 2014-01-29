@@ -121,6 +121,10 @@ func (a *Agent) getAction() int {
 	}
 
 	if a.phase == MAINTENANCE {
+		if arg.NoMoreDirt() {
+			return NOOP
+		}
+
 		return int(a.getPatrolDirection())
 	}
 

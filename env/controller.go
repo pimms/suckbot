@@ -92,6 +92,10 @@ func (c Controller) GetStartingTile() ITile {
 }
 
 func (c *Controller) Tick() {
+	if arg.NoMoreDirt() {
+		return
+	}
+
 	for i := 0; i < len(c.tileSlice); i++ {
 		c.tileSlice[i].tick()
 	}
@@ -113,7 +117,7 @@ func (c *Controller) GetMaxPermCount() uint64 {
 		var nTiles = uint64(len(c.tileSlice))
 		retVal = nTiles * (1 << nTiles)
 	}
-	
+
 	// Limit the number of permutations to a
 	// human number.
 	if retVal > MAX_PERM {
