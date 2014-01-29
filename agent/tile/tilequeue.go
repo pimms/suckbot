@@ -37,3 +37,7 @@ func (t *TileQueue) MoveToBack(element *TileWrapper) {
 func (t *TileQueue) GetHead() *TileWrapper {
 	return t.elements[0]
 }
+
+func (t *TileQueue) GetTileCount() int {
+	return len(t.elements)
+}

@@ -8,7 +8,12 @@ import (
 	"github.com/pimms/suckbot/util"
 )
 
+type e_phase int
+
 const (
+	EXPLORE     e_phase = 0
+	MAINTENANCE e_phase = 1
+
 	SUCK = 4
 	NOOP = 5
 
@@ -20,10 +25,14 @@ const (
 )
 
 type Agent struct {
-	tileState     tile.TileState
-	fullyExplored bool
-	currentTile   *tile.TileWrapper
-	tileQueue     tile.TileQueue
+	tileState   tile.TileState
+	currentTile *tile.TileWrapper
+	tileQueue   tile.TileQueue
+	phase       e_phase
+
+	history        t_history
+	noopstate      t_noopstate
+	noopsRemaining int
 }
 
 func (a *Agent) CHEAT_GetTileStatus(x, y int) tile.Status {
@@ -43,10 +52,25 @@ func (a *Agent) Initialize(startTile env.ITile) {
 }
 
 func (a *Agent) Tick(perf *util.SimPerf) {
-	var action int
+	if a.phase == MAINTENANCE {
+		totalTiles := a.tileQueue.GetTileCount()
 
-	action = a.getAction()
+		if a.history.hasCompletedRound(totalTiles) {
+			a.noopsRemaining = a.noopstate.onRoundComplete(&a.history, totalTiles)
+			a.history.onNewRound()
+
+			if arg.Verbose() {
+				fmt.Printf("ROUND COMPLETE: %d noops\n", a.noopsRemaining)
+			}
+		}
+	}
+
+	action := a.getAction()
 	a.performAction(action, perf)
+
+	if a.phase == MAINTENANCE {
+		a.history.addHistory(action, a.currentTile.GetITile())
+	}
 
 	a.tileQueue.MoveToBack(a.currentTile)
 	a.printAction(action)
@@ -78,21 +102,25 @@ func (a *Agent) printAction(action int) {
 }
 
 func (a *Agent) getAction() int {
+	if a.noopsRemaining > 0 {
+		a.noopsRemaining--
+		return NOOP
+	}
+
 	if a.currentTile.GetITile().GetState() == env.DIRTY {
 		return SUCK
 	}
 
-	if !a.fullyExplored {
+	if a.phase == EXPLORE {
 		a.tileQueue.AddUnique(a.currentTile)
-		// If there are no tiles left to explore,
-		// fall through to the "a.fullyExplored"-case.
+
 		var dir = int(a.getSearchDirection())
 		if dir != int(env.NONE) {
 			return dir
 		}
 	}
 
-	if a.fullyExplored {
+	if a.phase == MAINTENANCE {
 		return int(a.getPatrolDirection())
 	}
 
@@ -135,7 +163,8 @@ func (a *Agent) getSearchDirection() env.Direction {
 		tile.TILE_UNKOWN, &a.tileState)
 
 	if dir == env.NONE {
-		a.fullyExplored = true
+		a.phase = MAINTENANCE
+		a.onPhaseMaintenanceBegin()
 	}
 
 	return dir
@@ -166,4 +195,8 @@ func (a *Agent) moveInDirection(dir env.Direction) bool {
 		a.tileState.AddDiscoveryNil(x+dx, y+dy)
 		return false
 	}
+}
+
+func (a *Agent) onPhaseMaintenanceBegin() {
+	a.history.onNewRound()
 }
