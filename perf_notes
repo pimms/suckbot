@@ -1,3 +1,10 @@
 V 1.0
 	- No NOOP at all
 	Roughly -370 average in performance
+
+V 1.1 
+	NoopState to aim for 25%-33%
+	The score appears to hover around 30
+	
+	When running the simulation with 10k
+	ticks, the score hovers around 850.

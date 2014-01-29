@@ -1,6 +1,8 @@
 package agent
 
-import "github.com/pimms/suckbot/env"
+import (
+	"github.com/pimms/suckbot/env"
+)
 
 type t_state struct {
 	action int
@@ -56,7 +58,6 @@ func (h *t_history) addHistory(action int, tile env.ITile) {
 
 func (h *t_history) getStatistics(totalTiles int) (map[int]int, int) {
 	var stat map[int]int = make(map[int]int)
-	var actionsTotal int
 	var unique map[*t_state]bool = make(map[*t_state]bool)
 	var numActions int
 	var node *t_state
@@ -65,7 +66,7 @@ func (h *t_history) getStatistics(totalTiles int) (map[int]int, int) {
 	for len(unique) < totalTiles && node != nil {
 		unique[node] = true
 		stat[node.action]++
-		actionsTotal++
+		numActions++
 
 		node = node.next
 	}

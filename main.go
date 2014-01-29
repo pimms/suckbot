@@ -6,8 +6,8 @@ import (
 	"github.com/pimms/suckbot/arg"
 	"github.com/pimms/suckbot/env"
 	"github.com/pimms/suckbot/util"
-	"time"
 	"math/rand"
+	"time"
 )
 
 func main() {
@@ -25,8 +25,6 @@ func main() {
 
 	// Initialize the controller and the agent
 	controller := createController()
-	a := new(agent.Agent)
-	a.Initialize(controller.GetStartingTile())
 
 	var perfs []util.SimPerf
 	var max = controller.GetMaxPermCount()
@@ -35,6 +33,9 @@ func main() {
 
 	var posPerm, dirtPerm uint64 = 0, 0
 	for controller.CanPermute(posPerm, dirtPerm) {
+		a := new(agent.Agent)
+		a.Initialize(controller.GetStartingTile())
+
 		controller.Permute(posPerm, dirtPerm)
 		permNo := controller.GetPermNumber(posPerm, dirtPerm)
 

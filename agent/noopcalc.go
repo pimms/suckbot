@@ -6,8 +6,8 @@ import (
 )
 
 const (
-	MAX_SUCK = 33.0
-	MIN_SUCK = 25.0
+	MAX_SUCK = 0.33
+	MIN_SUCK = 0.25
 )
 
 type t_noopstate struct {
