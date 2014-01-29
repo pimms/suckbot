@@ -8,8 +8,8 @@ import (
 const (
 	MAX_SIZE = 8
 
-	// Don't allow more than 2^30 permutations
-	MAX_PERM = 1073741824
+	// Don't allow more than 1000 permutations
+	MAX_PERM = 1000
 )
 
 type Controller struct {
