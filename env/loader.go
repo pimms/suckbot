@@ -17,9 +17,9 @@ func LoadMap(filename string) [MAX_SIZE][MAX_SIZE]bool {
 
 	var v [MAX_SIZE][MAX_SIZE]bool
 	
-	var nrows = min(len(lines), 8)
+	var nrows = min(len(lines), MAX_SIZE)
 	for row:=0; row<nrows; row++ {
-		var ncols = min(len(lines[row]), 8)
+		var ncols = min(len(lines[row]), MAX_SIZE)
 		for col:=0; col<ncols; col++ {
 			if lines[row][col] != ' ' {
 				v[row][col] = true

@@ -11,6 +11,7 @@ import (
 
 func main() {
 	arg.BindArgs()
+
 	var visual bool = arg.Visual()
 	var rounds int = arg.NumRounds()
 	var delay int = arg.DelayMS()
@@ -123,7 +124,7 @@ func printPerfStat(context string,
 func createController() *env.Controller {
 	var controller *env.Controller
 	controller = new(env.Controller)
-	
+
 	var tileMap = env.LoadMap(arg.File())
 
 	controller.InitController(tileMap)
