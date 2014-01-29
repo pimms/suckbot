@@ -91,7 +91,7 @@ ALGORITHMIC OUTLINE OF SUCKBOT
 				MAX = MIN
 				MIN = MIN / 2
 				INC = MIN / 2
-				C = MIN + INC
+				C = MAX
 				return
 			C += INC
 			INC /= 2
@@ -99,13 +99,13 @@ ALGORITHMIC OUTLINE OF SUCKBOT
 			MIN = MAX
 			MAX *= 2
 			INC = MIN/2
-			C = MIN + INC
+			C = MAX
 	else if P > 33%
 		if INC == 0 
 			MIN = MAX
 			MAX = MAX * 2
 			INC = MIN/2
-			C = MIN + INC
+			C = MAX
 			return
 		C -= INC
 		INC /= 2
