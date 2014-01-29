@@ -2,7 +2,6 @@ package arg
 
 import "flag"
 
-var visual *bool
 var rounds *int
 var delayms *int
 var verbose *bool
@@ -11,7 +10,6 @@ var file *string
 var nomoredirt *bool
 
 func BindArgs() {
-	visual = flag.Bool("visual", false, "Draw the environment graphically")
 	rounds = flag.Int("rounds", 1000, "The number of ticks in each simulation")
 	delayms = flag.Int("delay", 500, "The delay between each tick in visual mode")
 	verbose = flag.Bool("verbose", false, "Verbose output to STDOUT")
@@ -19,10 +17,6 @@ func BindArgs() {
 	file = flag.String("file", "default", "The environment file to load from")
 	nomoredirt = flag.Bool("nmd", false, "Dirt will not reappear in tiles")
 	flag.Parse()
-}
-
-func Visual() bool {
-	return *visual
 }
 
 func NumRounds() int {

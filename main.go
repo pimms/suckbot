@@ -14,14 +14,8 @@ func main() {
 	arg.BindArgs()
 	rand.Seed(time.Now().UTC().UnixNano())
 
-	var visual bool = arg.Visual()
 	var rounds int = arg.NumRounds()
 	var delay int = arg.DelayMS()
-
-	var renderer t_renderer
-	if visual {
-		renderer.createWindow()
-	}
 
 	// Initialize the controller and the agent
 	controller := createController()
@@ -41,16 +35,6 @@ func main() {
 
 		// Run the simulation
 		for i := 0; i < rounds; i++ {
-			if visual {
-				renderer.pollEvents()
-				if renderer.shouldExit {
-					break
-				}
-
-				renderer.renderFrame(controller, a)
-				time.Sleep(time.Duration(delay) * time.Millisecond)
-			}
-
 			controller.Tick()
 			a.Tick(&perfs[permNo])
 
