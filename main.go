@@ -7,10 +7,12 @@ import (
 	"github.com/pimms/suckbot/env"
 	"github.com/pimms/suckbot/util"
 	"time"
+	"math/rand"
 )
 
 func main() {
 	arg.BindArgs()
+	rand.Seed(time.Now().UTC().UnixNano())
 
 	var visual bool = arg.Visual()
 	var rounds int = arg.NumRounds()
