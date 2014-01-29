@@ -15,7 +15,6 @@ func main() {
 	rand.Seed(time.Now().UTC().UnixNano())
 
 	var rounds int = arg.NumRounds()
-	var delay int = arg.DelayMS()
 
 	// Initialize the controller and the agent
 	controller := createController()

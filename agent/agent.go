@@ -77,7 +77,7 @@ func (a *Agent) Tick(perf *util.SimPerf) {
 }
 
 func (a *Agent) printAction(action int) {
-	if !arg.Verbose() || !arg.Visual() {
+	if !arg.Verbose() {
 		return
 	}
 
