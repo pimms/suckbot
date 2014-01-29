@@ -1,0 +1,111 @@
+ALGORITHMIC OUTLINE OF SUCKBOT
+==============================
+
+1. Exploration phase
+	SuckBot will, until all tiles have been discovered, execute
+	Dijkstra's algorithm to find the closest, undiscovered tile.
+	A* is then used to move the agent towards this tile. Keeping
+	the area clean during this phase is NOT a priority, but all
+	encountered dirty tiles will be cleaned. The agent's score
+	is based upon how many times a previously explored tile is
+	entered. A rectangular environment of N*N tiles should 
+	never involve moving onto a previously explored tile. 
+
+2. Maintenance phase
+	Once all tiles have been discovered, the agent enters the 
+	maintenance phase. In this phase, the agent's goal is to 
+	keep all tiles as clean as possible. The agent's success
+	is determined by how long the average tile stays dirty, and
+	by the percentage of clean-operations. Ideally, the clean
+	action should consist of 25%-33% of the actions performed,
+	meaning that the in the ideal environment ~33% of the tiles
+	are dirty. 
+
+2.A Priority queue during Maintenance Phase
+	The queue should meet all the following criteria:
+
+	1. 	The number of ticks since the previous visit of the 
+		relevant node. "Old" nodes have a higher priority than
+		"new" nodes.
+
+	2.	The expectancy of when the tile will become dirty. To
+		heed this, the agent must estimate the average ticks
+		needed for a tile to become dirty.
+
+	Criteria one is implemented as the TileQueue struct. It's
+	operation is extremely simple, but effective. When a tile
+	is entered, it is moved to the back of the queue. The agent
+	then moves towards the current front of the queue. The route
+	taken is rarely optimal, but the performance is still
+	surprisingly good. 
+
+	Criteria two is tricky, because it implies that the agent
+	should WAIT for tiles to become dirty before moving on to 
+	the next one. The agent could instead include the expected
+	state of the tile when path-finding. The agent will then
+	not go out of it's way to clean a tile that's beating the
+	RNG. 
+
+3	To OP or NoOP
+	The agent is very successful if it's cleaning 25%-33% of
+	it's actions. The agent is only capable of altering this
+	factor by *performing an action* or *NOT performing an
+	action*. If the percentage is too low, the agent must
+	NOOP more than it did the previous X ticks. If the 
+	percentage is too high, it must lower it's number of 
+	NOOPs, if there were any. 
+
+	The agent should keep track of the previous X 
+	observations, and it's responding action. This history
+	is used to calculate the number of clean-actions, and
+	can thus be used to decide what to do next. The result
+	of the evaluation must also be stored to aid future 
+	evaluations.
+
+3.A	The Algorithm
+	The algorithm is a modified version of binary search.
+	One ROUND is defined as having visited all then nodes.
+	
+	P 	= the percentage of clean actions last round
+	MIN = The lower bound value 
+	MAX = The upper bound value
+	INC	= The delta value to alter C with
+	C 	= The current count
+
+	We are "narrowing down" the search between MIN and MAX
+	if INC != MIN/2.
+
+	If P is less than 25%, the number of NOOPs should be
+	increased. 
+
+	If P is larger than 33%, the number of NOOPs should
+	be decreased.
+
+	If, while narrowing down, the increment is 0, the
+	randomness of the dirt has thrown us off. Stop the
+	narrowing and increase / decrease the MIN/MAX values.
+	
+	if P < 25%
+		if INC != MIN/2
+			if INC == 0 
+				MAX = MIN
+				MIN = MIN / 2
+				INC = MIN / 2
+				C = MIN + INC
+				return
+			C += INC
+			INC /= 2
+		else
+			MIN = MAX
+			MAX *= 2
+			INC = MIN/2
+			C = MIN + INC
+	else if P > 33%
+		if INC == 0 
+			MIN = MAX
+			MAX = MAX * 2
+			INC = MIN/2
+			C = MIN + INC
+			return
+		C -= INC
+		INC /= 2
