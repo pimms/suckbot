@@ -43,6 +43,15 @@ func GetTotalScore(s SimPerf) float64 {
 	return score
 }
 
+func GetSimpleScore(s SimPerf) float64 {
+	var score float64 = 0.0
+
+	score += GetCleanTicks(s)
+	score -= GetAgentMoves(s)
+
+	return score
+}
+
 func GetAgentMoves(s SimPerf) float64 {
 	return float64(s.agentMoves)
 }

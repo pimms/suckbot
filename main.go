@@ -95,6 +95,7 @@ func printSimPerfs(simPerf *[]util.SimPerf) {
 	printPerfStat("Dirty duration", simPerf, util.GetAvgDirtyTicks)
 	print("-----------------------------------\n")
 	printPerfStat("Clean tile-tick", simPerf, util.GetCleanTicks)
+	printPerfStat("Simple score", simPerf, util.GetSimpleScore)
 
 	print("\n\n")
 }
