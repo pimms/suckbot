@@ -24,6 +24,10 @@ type SimPerf struct {
 	// walked into that were dirty
 	dirtyEntry float64
 
+	// One point is awarded for each clean tile
+	// each tick
+	cleanTicks int
+
 	// The number of ticks a tile were dirty
 	avgDirtyTicks float64
 	minDirtyTicks int
@@ -63,6 +67,10 @@ func GetMaxDirtyTicks(s SimPerf) float64 {
 	return float64(s.maxDirtyTicks)
 }
 
+func GetCleanTicks(s SimPerf) float64 {
+	return float64(s.cleanTicks)
+}
+
 func (s *SimPerf) tileCleaned(tile env.ITile) {
 	var time int = tile.TimeSinceClean()
 
@@ -99,4 +107,16 @@ func (s *SimPerf) AgentEnteredTile(dirty bool) {
 	if dirty {
 		s.dirtyEntry += 1.0 / float64(arg.NumRounds())
 	}
+}
+
+/*
+====================
+Controller methods
+
+The following methods should only be called
+by the Controller-instance.
+====================
+*/
+func (s *SimPerf) SetCleanTilesThisTick(count int) {
+	s.cleanTicks += count
 }

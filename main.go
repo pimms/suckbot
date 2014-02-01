@@ -53,6 +53,8 @@ func main() {
 
 			controller.Tick()
 			a.Tick(&perfs[permNo])
+
+			perfs[permNo].SetCleanTilesThisTick(controller.GetCleanTilesCount())
 		}
 
 		if arg.Verbose() {
@@ -91,6 +93,8 @@ func printSimPerfs(simPerf *[]util.SimPerf) {
 	printPerfStat("Agent cleans", simPerf, util.GetAgentCleans)
 	printPerfStat("Dirty entry %", simPerf, util.GetDirtyEntries)
 	printPerfStat("Dirty duration", simPerf, util.GetAvgDirtyTicks)
+	print("-----------------------------------\n")
+	printPerfStat("Clean tile-tick", simPerf, util.GetCleanTicks)
 
 	print("\n\n")
 }

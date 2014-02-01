@@ -127,6 +127,18 @@ func (c *Controller) GetMaxPermCount() uint64 {
 	return retVal
 }
 
+func (c *Controller) GetCleanTilesCount() int {
+	var cleanCount int = 0
+
+	for i := 0; i < len(c.tileSlice); i++ {
+		if c.tileSlice[i].GetState() == CLEAN {
+			cleanCount++
+		}
+	}
+
+	return cleanCount
+}
+
 func (c *Controller) joinTiles() {
 	var thisTile ITile
 	var neighbour ITile
