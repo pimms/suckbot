@@ -102,13 +102,13 @@ func (a *Agent) printAction(action int) {
 }
 
 func (a *Agent) getAction() int {
+	if a.currentTile.GetITile().GetState() == env.DIRTY {
+		return SUCK
+	}
+
 	if a.noopsRemaining > 0 {
 		a.noopsRemaining--
 		return NOOP
-	}
-
-	if a.currentTile.GetITile().GetState() == env.DIRTY {
-		return SUCK
 	}
 
 	if a.phase == EXPLORE {
