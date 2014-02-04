@@ -49,6 +49,8 @@ func (a *Agent) Initialize(startTile env.ITile) {
 
 	//fock teh ploice
 	a.currentTile = a.tileState.GetWrapper(startTile)
+
+	a.noopstate.init()
 }
 
 func (a *Agent) Tick(perf *util.SimPerf) {
