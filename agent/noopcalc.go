@@ -17,9 +17,14 @@ type t_noopstate struct {
 	cur int
 }
 
-func (n *t_noopstate) onRoundComplete(history *t_history, totalTiles int) int {
-	n.keepWithinBounds()
+func (n *t_noopstate) init() {
+	n.max = 4
+	n.min = 2
+	n.inc = 1
+	n.cur = 4
+}
 
+func (n *t_noopstate) onRoundComplete(history *t_history, totalTiles int) int {
 	var p float64 = history.getActionPercent(SUCK, totalTiles)
 
 	// See "alg_outline" for details here
@@ -58,22 +63,4 @@ func (n *t_noopstate) onRoundComplete(history *t_history, totalTiles int) int {
 	}
 
 	return n.cur
-}
-
-func (n *t_noopstate) keepWithinBounds() {
-	if n.min == 0 {
-		n.min = 1
-	}
-
-	if n.max <= 1 {
-		n.max = n.min * 2
-	}
-
-	if n.inc == 0 {
-		n.inc = n.min / 2
-	}
-
-	if n.cur == 0 {
-		n.cur = n.max
-	}
 }

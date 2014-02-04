@@ -28,10 +28,9 @@ type SimPerf struct {
 	// each tick
 	cleanTicks int
 
-	// The number of ticks a tile were dirty
-	avgDirtyTicks float64
-	minDirtyTicks int
-	maxDirtyTicks int
+	// The number of ticks tiles has been dirty
+	// in total. Divide by "agentCleans" to get average.
+	dirtyTicks int
 }
 
 func GetTotalScore(s SimPerf) float64 {
@@ -60,20 +59,16 @@ func GetAgentCleans(s SimPerf) float64 {
 	return float64(s.agentCleans)
 }
 
-func GetDirtyEntries(s SimPerf) float64 {
-	return float64(s.dirtyEntry)
+func GetAgentCleanPercent(s SimPerf) float64 {
+	return (float64(s.agentCleans) / float64(arg.NumRounds())) * 100.0
+}
+
+func GetDirtyEntryPercent(s SimPerf) float64 {
+	return float64(s.dirtyEntry) * 100.0
 }
 
 func GetAvgDirtyTicks(s SimPerf) float64 {
-	return float64(s.avgDirtyTicks)
-}
-
-func GetMinDirtyTicks(s SimPerf) float64 {
-	return float64(s.minDirtyTicks)
-}
-
-func GetMaxDirtyTicks(s SimPerf) float64 {
-	return float64(s.maxDirtyTicks)
+	return float64(s.dirtyTicks) / float64(s.agentCleans)
 }
 
 func GetCleanTicks(s SimPerf) float64 {
@@ -82,17 +77,7 @@ func GetCleanTicks(s SimPerf) float64 {
 
 func (s *SimPerf) tileCleaned(tile env.ITile) {
 	var time int = tile.TimeSinceClean()
-
-	if s.minDirtyTicks == 0 || time < s.minDirtyTicks {
-		s.minDirtyTicks = time
-	}
-
-	if s.maxDirtyTicks == 0 || time > s.maxDirtyTicks {
-		s.maxDirtyTicks = time
-	}
-
-	var ftime = float64(time)
-	s.avgDirtyTicks += ftime / float64(arg.NumRounds())
+	s.dirtyTicks += time
 }
 
 /*
