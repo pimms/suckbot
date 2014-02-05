@@ -8,6 +8,8 @@ import (
 	"github.com/pimms/suckbot/util"
 	"math/rand"
 	"time"
+	"bufio"
+	"os"
 )
 
 func main() {
@@ -50,7 +52,8 @@ func main() {
 				renderer.renderFrame(controller, a)
 
 				if arg.Manual() {
-					_, _ = fmt.Scanf("")
+					reader := bufio.NewReader(os.Stdin)
+				    _, _ = reader.ReadString('\n')
 				} else {
 					time.Sleep(time.Duration(delay) * time.Millisecond)
 				}
