@@ -204,5 +204,9 @@ func (a *Agent) moveInDirection(dir env.Direction) bool {
 }
 
 func (a *Agent) onPhaseMaintenanceBegin() {
+	if arg.Verbose() {
+		print("[Phase MAINTENANCE]\n")
+	}
+
 	a.history.onNewRound()
 }
