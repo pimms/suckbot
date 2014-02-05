@@ -48,7 +48,12 @@ func main() {
 				}
 
 				renderer.renderFrame(controller, a)
-				time.Sleep(time.Duration(delay) * time.Millisecond)
+
+				if arg.Manual() {
+					_, _ = fmt.Scanf("")
+				} else {
+					time.Sleep(time.Duration(delay) * time.Millisecond)
+				}
 			}
 
 			controller.Tick()

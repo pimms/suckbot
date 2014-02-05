@@ -9,6 +9,7 @@ var verbose *bool
 var maxperms *int
 var file *string
 var nomoredirt *bool
+var manual *bool
 
 func BindArgs() {
 	visual = flag.Bool("visual", false, "Draw the environment graphically")
@@ -18,6 +19,7 @@ func BindArgs() {
 	maxperms = flag.Int("maxperm", -1, "The maximum number of permutations (defaults to N*2^N)")
 	file = flag.String("file", "default", "The environment file to load from")
 	nomoredirt = flag.Bool("nmd", false, "Dirt will not reappear in tiles")
+	manual = flag.Bool("manual", "Visual mode will not progress until enter is pressed")
 	flag.Parse()
 }
 
@@ -48,3 +50,8 @@ func File() string {
 func NoMoreDirt() bool {
 	return *nomoredirt
 }
+
+func Manual() bool {
+	return *manual
+}
+
