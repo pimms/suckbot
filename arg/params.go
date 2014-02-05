@@ -19,7 +19,7 @@ func BindArgs() {
 	maxperms = flag.Int("maxperm", -1, "The maximum number of permutations (defaults to N*2^N)")
 	file = flag.String("file", "default", "The environment file to load from")
 	nomoredirt = flag.Bool("nmd", false, "Dirt will not reappear in tiles")
-	manual = flag.Bool("manual", "Visual mode will not progress until enter is pressed")
+	manual = flag.Bool("manual", false, "Visual mode will not progress until enter is pressed")
 	flag.Parse()
 }
 
